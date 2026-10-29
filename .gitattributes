@@ -4,5 +4,6 @@ mvnw text eol=lf
 Dockerfile text eol=lf
 *.yml text eol=lf
 *.sql text eol=lf
+*.svg text eol=lf
 mvnw.cmd text eol=crlf
 *.bat text eol=crlf
