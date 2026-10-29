@@ -1,0 +1,123 @@
+spring:
+  application:
+    name: payshield-ai
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:payshield}
+    username: ${POSTGRES_USER:payshield_user}
+    password: ${POSTGRES_PASSWORD:payshield_local_pass}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 5000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 1500ms
+      connect-timeout: 1500ms
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+        max.block.ms: 2000
+        request.timeout.ms: 2000
+        delivery.timeout.ms: 5000
+    consumer:
+      group-id: payshield-ledger-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: false
+    listener:
+      ack-mode: record
+      auto-startup: ${KAFKA_LISTENER_AUTO_STARTUP:true}
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+  health:
+    redis:
+      enabled: false
+    mail:
+      enabled: false
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+
+payshield:
+  environment-label: ${SPRING_PROFILES_ACTIVE:production}
+  cors:
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:8080,http://127.0.0.1:8080}
+  security:
+    jwt-secret: ${JWT_SECRET:payshield-local-dev-only-hmac-sha256-secret-key-replace-in-prod-99887766}
+    access-token-ttl-seconds: ${JWT_ACCESS_EXPIRATION_SECONDS:900}
+    refresh-token-ttl-seconds: ${JWT_REFRESH_EXPIRATION_SECONDS:604800}
+    cookie-secure: ${APP_COOKIE_SECURE:false}
+    max-login-attempts-per-minute: ${LOGIN_RATE_LIMIT_PER_MINUTE:10}
+    account-lockout-threshold: 5
+    account-lockout-minutes: 15
+    bootstrap-admin-email: ${BOOTSTRAP_ADMIN_EMAIL:}
+    bootstrap-admin-password: ${BOOTSTRAP_ADMIN_PASSWORD:}
+    demo-seed-enabled: ${DEMO_SEED_ENABLED:false}
+  risk:
+    velocity-max-attempts: ${RISK_VELOCITY_MAX_ATTEMPTS:5}
+    velocity-window-seconds: ${RISK_VELOCITY_WINDOW_SECONDS:60}
+    flag-threshold: ${RISK_FLAG_THRESHOLD:0.62}
+    decline-threshold: ${RISK_DECLINE_THRESHOLD:0.84}
+    rag-cache-ttl-hours: 6
+  opensearch:
+    enabled: ${OPENSEARCH_ENABLED:true}
+    scheme: ${OPENSEARCH_SCHEME:http}
+    host: ${OPENSEARCH_HOST:localhost}
+    port: ${OPENSEARCH_PORT:9200}
+    username: ${OPENSEARCH_USERNAME:}
+    password: ${OPENSEARCH_PASSWORD:}
+    index-name: fraud-behavior-vectors
+  ai:
+    provider: ${AI_PROVIDER:OFFLINE}
+    api-key: ${AI_API_KEY:}
+    base-url: ${AI_BASE_URL:https://api.openai.com/v1}
+    model: ${AI_MODEL:gpt-4o-mini}
+    timeout-seconds: ${AI_TIMEOUT_SECONDS:10}
+  outbox:
+    poll-interval-ms: ${OUTBOX_POLL_INTERVAL_MS:3000}
+    max-attempts: 3

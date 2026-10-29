@@ -1,0 +1,44 @@
+# Compiled class files and Maven build artifacts
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+secrets/
+credentials*.json
+
+# IDE and OS files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+.factorypath
+.DS_Store
+Thumbs.db
+
+# Logs and runtime data
+logs/
+*.log
+data/
+postgres-data/
+redis-data/
+opensearch-data/
+kafka-data/
+.jdks/
+
+# Packaging output
+payshield-ai.zip

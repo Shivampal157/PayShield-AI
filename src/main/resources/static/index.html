@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PayShield AI — Intelligent Payments. Explainable Risk. Reliable Ledger.</title>
+    <!--
+      Production Asset Strategy:
+      Local development uses Tailwind CSS Play CDN for zero-node-toolchain startup inside Spring Boot.
+      For production builds, compile static utility CSS via `@tailwindcss/cli -i src/input.css -o src/main/resources/static/assets/payshield.min.css --minify`
+      and reference `/assets/payshield.min.css`. Core layout and color tokens are also defined below in native CSS as a resilient baseline.
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            900: '#0a2540',
+                            800: '#103152',
+                            700: '#1b436b'
+                        },
+                        brand: {
+                            600: '#0052cc',
+                            700: '#003e99',
+                            50: '#eff6ff'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        :root {
+            --bg-surface: #ffffff;
+            --bg-canvas: #f4f6f9;
+            --text-primary: #0a2540;
+            --text-secondary: #475569;
+            --accent-blue: #0052cc;
+            --border-subtle: #e2e8f0;
+        }
+        .dark {
+            --bg-surface: #0f172a;
+            --bg-canvas: #020617;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-blue: #3b82f6;
+            --border-subtle: #1e293b;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
+        }
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+    </style>
+</head>
+<body class="min-h-full bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- Global Toast Notification Region -->
+    <div id="toast-container" aria-live="polite" aria-atomic="true" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none px-4 sm:px-0"></div>
+
+    <!-- ================================================================== -->
+    <!-- AUTHENTICATION VIEW (Login / Register / Password Reset)            -->
+    <!-- ================================================================== -->
+    <div id="auth-view" class="min-h-screen flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8">
+        <div class="sm:mx-auto sm:w-full sm:max-w-md">
+            <div class="flex items-center justify-center gap-3">
+                <div class="w-11 h-11 rounded-lg bg-[#0052cc] flex items-center justify-center text-white font-bold text-xl shadow-sm">
+                    PS
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight text-[#0a2540] dark:text-white">PayShield AI</h1>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Intelligent Payments. Explainable Risk. Reliable Ledger.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+            <div class="bg-white dark:bg-slate-900 py-7 px-6 shadow-sm rounded-xl border border-slate-200 dark:border-slate-800 sm:px-8">
+                <!-- Auth Mode Tabs -->
+                <div class="flex border-b border-slate-200 dark:border-slate-800 mb-6" role="tablist">
+                    <button id="tab-login" type="button" role="tab" aria-selected="true"
+                            onclick="switchAuthTab('login')"
+                            class="flex-1 pb-3 text-sm font-semibold border-b-2 border-[#0052cc] text-[#0052cc] dark:text-blue-400 dark:border-blue-400">
+                        Sign In
+                    </button>
+                    <button id="tab-register" type="button" role="tab" aria-selected="false"
+                            onclick="switchAuthTab('register')"
+                            class="flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                        Create Account
+                    </button>
+                    <button id="tab-reset" type="button" role="tab" aria-selected="false"
+                            onclick="switchAuthTab('reset')"
+                            class="flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                        Password Reset
+                    </button>
+                </div>
+
+                <div id="auth-error-banner" role="alert" class="hidden mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300"></div>
+                <div id="auth-success-banner" role="status" class="hidden mb-4 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-700 dark:text-emerald-300"></div>
+
+                <!-- LOGIN FORM -->
+                <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
+                    <div>
+                        <label for="login-email" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Email Address</label>
+                        <input id="login-email" name="email" type="email" required autocomplete="email"
+                               placeholder="alice.morgan@payshield.demo"
+                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm focus:border-[#0052cc] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                    </div>
+                    <div>
+                        <label for="login-password" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Password</label>
+                        <input id="login-password" name="password" type="password" required autocomplete="current-password"
+                               placeholder="••••••••••••"
+                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm focus:border-[#0052cc] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                    </div>
+                    <button id="login-submit-btn" type="submit"
+                            class="w-full py-2.5 px-4 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white font-semibold text-sm transition shadow-sm">
+                        Sign In to PayShield AI
+                    </button>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="register-form" class="space-y-4 hidden" onsubmit="handleRegister(event)">
+                    <div>
+                        <label for="reg-name" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Full Legal Name</label>
+                        <input id="reg-name" type="text" required minlength="2" maxlength="120"
+                               placeholder="Jordan Taylor"
+                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm focus:border-[#0052cc] focus:outline-none" />
+                    </div>
+                    <div>
+                        <label for="reg-email" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Email Address</label>
+                        <input id="reg-email" type="email" required
+                               placeholder="jordan.taylor@example.com"
+                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm focus:border-[#0052cc] focus:outline-none" />
+                    </div>
+                    <div>
+                        <label for="reg-password" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Password (10+ chars, upper, lower &amp; digit)</label>
+                        <input id="reg-password" type="password" required minlength="10"
+                               placeholder="StrongPass2026"
+                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm focus:border-[#0052cc] focus:outline-none" />
+                    </div>
+                    <div>
+                        <label for="reg-currency" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Primary Wallet Currency</label>
+                        <select id="reg-currency" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm">
+                            <option value="USD">USD — US Dollar ($5,000.00 simulated starter balance)</option>
+                            <option value="EUR">EUR — Euro (€5,000.00 simulated starter balance)</option>
+                            <option value="GBP">GBP — British Pound (£5,000.00 simulated starter balance)</option>
+                        </select>
+                    </div>
+                    <button id="reg-submit-btn" type="submit"
+                            class="w-full py-2.5 px-4 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white font-semibold text-sm transition shadow-sm">
+                        Create Account &amp; Provision Wallet
+                    </button>
+                </form>
+
+                <!-- PASSWORD RESET FORM -->
+                <div id="reset-form-container" class="space-y-4 hidden">
+                    <form onsubmit="handlePasswordResetRequest(event)" class="space-y-3">
+                        <p class="text-xs text-slate-600 dark:text-slate-400">Request a single-use 15-minute reset token via the safe local development email outbox adapter.</p>
+                        <div>
+                            <label for="reset-email" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Account Email</label>
+                            <input id="reset-email" type="email" required placeholder="alice.morgan@payshield.demo"
+                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm" />
+                        </div>
+                        <button type="submit" class="w-full py-2 px-4 rounded-lg bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs transition">
+                            Send Single-Use Reset Token
+                        </button>
+                    </form>
+                    <form onsubmit="handlePasswordResetConfirm(event)" class="space-y-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                        <div>
+                            <label for="reset-token" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Single-Use Reset Token</label>
+                            <input id="reset-token" type="text" required placeholder="Paste reset token"
+                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm mono" />
+                        </div>
+                        <div>
+                            <label for="reset-new-password" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">New Password</label>
+                            <input id="reset-new-password" type="password" required minlength="10" placeholder="NewStrongPass1"
+                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm" />
+                        </div>
+                        <button type="submit" class="w-full py-2 px-4 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white font-semibold text-xs transition">
+                            Confirm Password Reset
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Local Demo Persona Quick-Fill -->
+                <div class="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2.5">Local Sandbox Quick-Fill Personas</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="fillDemoCredentials('alice.morgan@payshield.demo', 'PayShieldDemo1')"
+                                class="px-2.5 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition">
+                            <div class="text-xs font-semibold text-slate-800 dark:text-slate-200">Alice Morgan</div>
+                            <div class="text-[10px] text-blue-600 dark:text-blue-400 font-medium">CUSTOMER</div>
+                        </button>
+                        <button type="button" onclick="fillDemoCredentials('elena.rostova@payshield.demo', 'PayShieldDemo1')"
+                                class="px-2.5 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition">
+                            <div class="text-xs font-semibold text-slate-800 dark:text-slate-200">Elena Rostova</div>
+                            <div class="text-[10px] text-amber-600 dark:text-amber-400 font-medium">RISK_ANALYST</div>
+                        </button>
+                        <button type="button" onclick="fillDemoCredentials('marcus.vance@payshield.demo', 'PayShieldDemo1')"
+                                class="px-2.5 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition">
+                            <div class="text-xs font-semibold text-slate-800 dark:text-slate-200">Marcus Vance</div>
+                            <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">ADMIN</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <p class="mt-4 text-center text-xs text-slate-500 dark:text-slate-400">
+                Portfolio FinTech Simulator — Simulated Ledger Balances Only (Not a Real-Money Processor).
+                <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-[#0052cc] dark:text-blue-400 underline ml-1">OpenAPI / Swagger UI</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- AUTHENTICATED WORKSPACE SHELL                                      -->
+    <!-- ================================================================== -->
+    <div id="app-shell" class="hidden min-h-screen flex flex-col lg:flex-row">
+
+        <!-- Left Navigation Sidebar -->
+        <aside id="sidebar" class="w-full lg:w-64 bg-[#0a2540] text-white flex-shrink-0 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800">
+            <div>
+                <!-- Brand Header -->
+                <div class="px-5 py-4 flex items-center justify-between border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-[#0052cc] flex items-center justify-center font-bold text-white text-base">PS</div>
+                        <div>
+                            <div class="font-bold text-base tracking-tight leading-none">PayShield AI</div>
+                            <div class="text-[11px] text-slate-400 mt-1">Ledger &amp; Risk Platform</div>
+                        </div>
+                    </div>
+                    <button type="button" class="lg:hidden text-slate-300 hover:text-white p-1" onclick="toggleMobileNav()" aria-label="Toggle navigation menu">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav id="nav-links" class="hidden lg:block px-3 py-4 space-y-1" aria-label="Main Navigation">
+                    <button type="button" onclick="navigateTo('overview')" data-nav="overview"
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left bg-[#0052cc] text-white">
+                        <span>Overview</span>
+                    </button>
+                    <button type="button" onclick="navigateTo('payments')" data-nav="payments"
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                        <span>Payments &amp; Simulator</span>
+                    </button>
+                    <button type="button" onclick="navigateTo('ledger')" data-nav="ledger"
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                        <span>Double-Entry Ledger</span>
+                    </button>
+                    <button type="button" onclick="navigateTo('risk')" data-nav="risk"
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                        <span>Risk Operations</span>
+                    </button>
+                    <button type="button" onclick="navigateTo('disputes')" data-nav="disputes"
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                        <span>AI Dispute Copilot (RAG)</span>
+                    </button>
+                    <button type="button" onclick="navigateTo('settings')" data-nav="settings"
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                        <span>Settings &amp; Telemetry</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="hidden lg:block p-4 border-t border-slate-800 text-xs text-slate-400 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span>Auth Mode:</span>
+                    <span class="font-mono text-emerald-400">HttpOnly + CSRF</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span>API Docs:</span>
+                    <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-blue-400 hover:underline">Swagger UI ↗</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Top Bar -->
+            <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 id="page-title" class="text-lg font-bold text-[#0a2540] dark:text-white">Account Overview</h2>
+                    <p id="page-subtitle" class="text-xs text-slate-500 dark:text-slate-400">Real-time wallet balances, transaction telemetry, and fraud risk indicators.</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <span id="user-role-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-[#0052cc] dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                        CUSTOMER
+                    </span>
+                    <span id="user-email-display" class="text-xs font-medium text-slate-700 dark:text-slate-300 hidden sm:inline"></span>
+
+                    <button type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme"
+                            class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        Theme
+                    </button>
+                    <button type="button" onclick="handleLogout()"
+                            class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 transition">
+                        Sign Out
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Views Container -->
+            <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+
+                <!-- ====================================================== -->
+                <!-- PAGE 1: OVERVIEW                                       -->
+                <!-- ====================================================== -->
+                <section id="view-overview" class="space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Currency-Aware Wallets</h3>
+                        <button type="button" onclick="loadOverviewData()" class="text-xs font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">
+                            Refresh Telemetry
+                        </button>
+                    </div>
+
+                    <div id="overview-wallets-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+                    <!-- Status Breakdown & Distribution Bar -->
+                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Payment Status Distribution</h3>
+                                <p class="text-xs text-slate-500">Live counts across the payment ledger database</p>
+                            </div>
+                            <span id="overview-total-tx" class="text-xs font-mono font-semibold px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800">Total: 0</span>
+                        </div>
+                        <div id="overview-status-bar" class="h-3 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex mb-4"></div>
+                        <div id="overview-status-cards" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Recent Payments Table -->
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Recent Payments</h3>
+                                <button type="button" onclick="navigateTo('payments')" class="text-xs font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">
+                                    Open Simulator →
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase">
+                                            <th class="py-2.5 pr-3">Counterparty / Merchant</th>
+                                            <th class="py-2.5 px-3">Amount</th>
+                                            <th class="py-2.5 px-3">Risk Score</th>
+                                            <th class="py-2.5 px-3">Status</th>
+                                            <th class="py-2.5 pl-3 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="overview-recent-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Active Risk Alerts -->
+                        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Quarantined Risk Alerts</h3>
+                                <button type="button" onclick="navigateTo('risk')" class="text-xs font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">
+                                    Risk Queue →
+                                </button>
+                            </div>
+                            <div id="overview-alerts-list" class="space-y-3"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ====================================================== -->
+                <!-- PAGE 2: PAYMENTS & SIMULATOR                           -->
+                <!-- ====================================================== -->
+                <section id="view-payments" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Payment Simulator Form -->
+                        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Payment &amp; Risk Telemetry Simulator</h3>
+                                    <p class="text-xs text-slate-500">Test idempotency, 8-D vector scoring, and ACID transfers</p>
+                                </div>
+                            </div>
+
+                            <!-- Scenario Presets -->
+                            <div>
+                                <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Synthetic Scenario Presets</label>
+                                <div class="grid grid-cols-3 gap-1.5">
+                                    <button type="button" onclick="applyPaymentPreset('normal')"
+                                            class="px-2 py-1.5 rounded border border-slate-200 dark:border-slate-700 text-[11px] font-medium hover:bg-slate-50 dark:hover:bg-slate-800">
+                                        Normal Domestic
+                                    </button>
+                                    <button type="button" onclick="applyPaymentPreset('crypto')"
+                                            class="px-2 py-1.5 rounded border border-amber-200 dark:border-amber-800 text-[11px] font-medium text-amber-800 dark:text-amber-300 hover:bg-amber-50/50">
+                                        Offshore Crypto
+                                    </button>
+                                    <button type="button" onclick="applyPaymentPreset('ato')"
+                                            class="px-2 py-1.5 rounded border border-red-200 dark:border-red-800 text-[11px] font-medium text-red-700 dark:text-red-300 hover:bg-red-50/50">
+                                        Untrusted ATO
+                                    </button>
+                                </div>
+                            </div>
+
+                            <form id="payment-sim-form" class="space-y-3" onsubmit="openTransferConfirmationModal(event)">
+                                <div>
+                                    <label for="pay-recipient" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Recipient Email or Account Number</label>
+                                    <input id="pay-recipient" type="text" required list="recipient-suggestions"
+                                           value="bob.chen@payshield.demo"
+                                           class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs" />
+                                    <datalist id="recipient-suggestions"></datalist>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="pay-amount" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Amount (BigDecimal)</label>
+                                        <input id="pay-amount" type="number" step="0.01" min="0.01" max="1000000" required value="125.00"
+                                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs mono" />
+                                    </div>
+                                    <div>
+                                        <label for="pay-currency" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Currency</label>
+                                        <select id="pay-currency" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs">
+                                            <option value="USD">USD</option>
+                                            <option value="EUR">EUR</option>
+                                            <option value="GBP">GBP</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="pay-merchant" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Merchant / Description</label>
+                                        <input id="pay-merchant" type="text" required value="Enterprise Cloud Settlement"
+                                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs" />
+                                    </div>
+                                    <div>
+                                        <label for="pay-category" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Merchant Category (MCC)</label>
+                                        <select id="pay-category" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs">
+                                            <option value="SAAS_SUBSCRIPTION">SAAS_SUBSCRIPTION (Low Risk)</option>
+                                            <option value="RETAIL">RETAIL (Low Risk)</option>
+                                            <option value="DINING">DINING (Low Risk)</option>
+                                            <option value="ELECTRONICS">ELECTRONICS (Medium Risk)</option>
+                                            <option value="LUXURY_GOODS">LUXURY_GOODS (Elevated Risk)</option>
+                                            <option value="OFFSHORE_WIRE">OFFSHORE_WIRE (High Risk)</option>
+                                            <option value="CRYPTO_EXCHANGE">CRYPTO_EXCHANGE (Critical Risk)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div>
+                                        <label for="pay-src-country" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Origin ISO</label>
+                                        <input id="pay-src-country" type="text" maxlength="2" required value="US"
+                                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs uppercase mono" />
+                                    </div>
+                                    <div>
+                                        <label for="pay-dst-country" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Dest ISO</label>
+                                        <input id="pay-dst-country" type="text" maxlength="2" required value="US"
+                                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs uppercase mono" />
+                                    </div>
+                                    <div>
+                                        <label for="pay-ip-dist" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">IP Dist (km)</label>
+                                        <input id="pay-ip-dist" type="number" min="0" max="25000" required value="20"
+                                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs mono" />
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="pay-device-trust" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Device Trust (0.0–1.0)</label>
+                                        <input id="pay-device-trust" type="number" step="0.01" min="0" max="1" required value="0.96"
+                                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs mono" />
+                                    </div>
+                                    <div>
+                                        <label for="pay-account-age" class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Account Age (Days)</label>
+                                        <input id="pay-account-age" type="number" min="0" max="5000" required value="365"
+                                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs mono" />
+                                    </div>
+                                </div>
+
+                                <!-- Idempotency Key Control -->
+                                <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <label for="pay-idempotency-key" class="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">Idempotency-Key Header</label>
+                                        <button type="button" onclick="generateNewIdempotencyKey()" class="text-[11px] font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">
+                                            Generate New Key
+                                        </button>
+                                    </div>
+                                    <input id="pay-idempotency-key" type="text" required
+                                           class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-1.5 text-xs mono" />
+                                    <label class="flex items-center gap-2 text-[11px] text-slate-600 dark:text-slate-400 cursor-pointer">
+                                        <input id="pay-keep-idem-key" type="checkbox" class="rounded border-slate-300" />
+                                        <span>Keep same Idempotency-Key after submit (to test deduplication / 409 mismatch)</span>
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="w-full py-2.5 px-4 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white font-semibold text-xs transition shadow-sm">
+                                    Review &amp; Submit Payment Transfer
+                                </button>
+                            </form>
+
+                            <!-- Velocity Burst Action -->
+                            <div class="pt-3 border-t border-slate-200 dark:border-slate-800">
+                                <button id="velocity-sim-btn" type="button" onclick="runVelocityAttackSimulation()"
+                                        class="w-full py-2 px-3 rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 font-semibold text-xs transition">
+                                    Simulate Velocity Attack (7 Attempts / 60s Window)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right 2 Columns: Last API Result + Filterable Transaction History -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- Latest API Execution Telemetry Card -->
+                            <div id="latest-payment-result" class="hidden bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm"></div>
+
+                            <!-- Search, Filter & Paginated Transactions -->
+                            <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+                                <div class="flex flex-wrap items-center justify-between gap-3">
+                                    <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Transaction History</h3>
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <input id="tx-filter-search" type="search" placeholder="Search merchant, email, key..."
+                                               oninput="debouncedLoadTransactions()"
+                                               class="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs" />
+                                        <select id="tx-filter-status" onchange="loadTransactions(0)"
+                                                class="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs">
+                                            <option value="">All Statuses</option>
+                                            <option value="APPROVED">APPROVED</option>
+                                            <option value="FLAGGED_FRAUD">FLAGGED_FRAUD</option>
+                                            <option value="REVIEW_REQUIRED">REVIEW_REQUIRED</option>
+                                            <option value="DECLINED">DECLINED</option>
+                                        </select>
+                                        <select id="tx-filter-currency" onchange="loadTransactions(0)"
+                                                class="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs">
+                                            <option value="">All Currencies</option>
+                                            <option value="USD">USD</option>
+                                            <option value="EUR">EUR</option>
+                                            <option value="GBP">GBP</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left border-collapse text-xs">
+                                        <thead>
+                                            <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase">
+                                                <th class="py-2.5 pr-3">Tx ID / Idempotency</th>
+                                                <th class="py-2.5 px-3">Counterparty</th>
+                                                <th class="py-2.5 px-3">Amount</th>
+                                                <th class="py-2.5 px-3">Risk (0–0.99)</th>
+                                                <th class="py-2.5 px-3">Status</th>
+                                                <th class="py-2.5 px-3">Latency</th>
+                                                <th class="py-2.5 pl-3 text-right">Inspect</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="payments-table-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                                    </table>
+                                </div>
+
+                                <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500">
+                                    <span id="tx-pagination-info">Page 1</span>
+                                    <div class="flex gap-2">
+                                        <button id="tx-prev-btn" type="button" onclick="changeTxPage(-1)" class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700 disabled:opacity-40">Previous</button>
+                                        <button id="tx-next-btn" type="button" onclick="changeTxPage(1)" class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700 disabled:opacity-40">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ====================================================== -->
+                <!-- PAGE 3: DOUBLE-ENTRY LEDGER & RECONCILIATION           -->
+                <!-- ====================================================== -->
+                <section id="view-ledger" class="hidden space-y-6">
+                    <!-- Reconciliation Verification Banner -->
+                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Zero-Sum Double-Entry Reconciliation Engine</h3>
+                                <p class="text-xs text-slate-500">Verifies that every APPROVED payment has matching immutable DEBIT and CREDIT entries and net difference = 0.0000.</p>
+                            </div>
+                            <button type="button" onclick="loadReconciliationReport()"
+                                    class="px-3.5 py-2 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white text-xs font-semibold transition">
+                                Run Full Reconciliation Audit
+                            </button>
+                        </div>
+                        <div id="reconciliation-panel" class="text-xs text-slate-600 dark:text-slate-300"></div>
+                    </div>
+
+                    <!-- Immutable Ledger Entries Table -->
+                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Immutable Double-Entry Journal</h3>
+                            <div class="flex gap-2">
+                                <select id="ledger-filter-type" onchange="loadLedgerEntries(0)"
+                                        class="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs">
+                                    <option value="">All Entry Types</option>
+                                    <option value="DEBIT">DEBIT</option>
+                                    <option value="CREDIT">CREDIT</option>
+                                </select>
+                                <select id="ledger-filter-currency" onchange="loadLedgerEntries(0)"
+                                        class="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs">
+                                    <option value="">All Currencies</option>
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="GBP">GBP</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase">
+                                        <th class="py-2.5 pr-3">Entry ID</th>
+                                        <th class="py-2.5 px-3">Transaction ID</th>
+                                        <th class="py-2.5 px-3">Account Number</th>
+                                        <th class="py-2.5 px-3">Type</th>
+                                        <th class="py-2.5 px-3">Amount</th>
+                                        <th class="py-2.5 px-3">Balance After</th>
+                                        <th class="py-2.5 px-3">Description</th>
+                                        <th class="py-2.5 pl-3">Timestamp</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ledger-table-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500">
+                            <span id="ledger-pagination-info">Page 1</span>
+                            <div class="flex gap-2">
+                                <button id="ledger-prev-btn" type="button" onclick="changeLedgerPage(-1)" class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700 disabled:opacity-40">Previous</button>
+                                <button id="ledger-next-btn" type="button" onclick="changeLedgerPage(1)" class="px-3 py-1 rounded border border-slate-200 dark:border-slate-700 disabled:opacity-40">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ====================================================== -->
+                <!-- PAGE 4: RISK OPERATIONS                                -->
+                <!-- ====================================================== -->
+                <section id="view-risk" class="hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <div>
+                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Suspicious &amp; Quarantined Transaction Queue</h3>
+                                <p class="text-xs text-slate-500">8-D behavioral vector matches, explainable factors, and Risk Analyst sign-off controls</p>
+                            </div>
+                            <select id="risk-queue-filter" onchange="loadRiskQueue()"
+                                    class="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs">
+                                <option value="">All Quarantined / Declined</option>
+                                <option value="FLAGGED_FRAUD">FLAGGED_FRAUD</option>
+                                <option value="REVIEW_REQUIRED">REVIEW_REQUIRED</option>
+                                <option value="DECLINED">DECLINED</option>
+                            </select>
+                        </div>
+
+                        <div id="risk-queue-list" class="space-y-4"></div>
+                    </div>
+
+                    <!-- Security & Operational Audit Trail -->
+                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Security &amp; Analyst Audit Trail</h3>
+                                <p class="text-xs text-slate-500">Immutable record of authentication, payment risk evaluations, and analyst decisions</p>
+                            </div>
+                            <button type="button" onclick="loadAuditLogs()" class="text-xs font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">Refresh Audit Log</button>
+                        </div>
+                        <div id="audit-log-container" class="overflow-x-auto"></div>
+                    </div>
+                </section>
+
+                <!-- ====================================================== -->
+                <!-- PAGE 5: AI DISPUTE COPILOT (RAG)                       -->
+                <!-- ====================================================== -->
+                <section id="view-disputes" class="hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">AI Dispute Copilot &amp; Retrieval-Augmented Investigation</h3>
+                                <p class="text-xs text-slate-500">Combines OpenSearch top-K synthetic cases + local compliance policy corpus v2.4.0 with SHA-256 Redis caching (6h TTL)</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-end gap-3 pt-2">
+                            <div class="flex-1 min-w-[260px]">
+                                <label for="rag-tx-select" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Select Transaction to Investigate</label>
+                                <select id="rag-tx-select" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs mono"></select>
+                            </div>
+                            <button id="run-rag-btn" type="button" onclick="executeSelectedRagAudit()"
+                                    class="px-4 py-2 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white font-semibold text-xs transition shadow-sm">
+                                Run RAG Dispute Audit
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="rag-report-container" class="space-y-6">
+                        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 text-center text-xs text-slate-500">
+                            Select any payment transaction above and click <strong>Run RAG Dispute Audit</strong> to retrieve top-K OpenSearch behavioral matches, applicable compliance policies, and the structured three-point investigation report.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ====================================================== -->
+                <!-- PAGE 6: SETTINGS & TELEMETRY                           -->
+                <!-- ====================================================== -->
+                <section id="view-settings" class="hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Current User Profile & Session Controls -->
+                        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+                            <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Authenticated Profile &amp; Session Security</h3>
+                            <dl id="settings-profile-dl" class="divide-y divide-slate-100 dark:divide-slate-800 text-xs"></dl>
+                            <div class="flex flex-wrap gap-3 pt-3">
+                                <button type="button" onclick="manualTokenRefresh()"
+                                        class="px-3.5 py-2 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white text-xs font-semibold transition">
+                                    Rotate Refresh Token Now
+                                </button>
+                                <button type="button" onclick="handleLogout()"
+                                        class="px-3.5 py-2 rounded-lg border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-semibold hover:bg-red-50 dark:hover:bg-red-950/50 transition">
+                                    Revoke Session &amp; Sign Out
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Infrastructure & Risk Engine Telemetry -->
+                        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Infrastructure &amp; Risk Engine Telemetry</h3>
+                                <button type="button" onclick="loadSettingsTelemetry()" class="text-xs font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">Refresh</button>
+                            </div>
+                            <div id="settings-telemetry-box" class="space-y-3 text-xs"></div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- MODAL 1: TRANSFER CONFIRMATION DIALOG                              -->
+    <!-- ================================================================== -->
+    <div id="confirm-transfer-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title"
+         class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 shadow-xl space-y-4">
+            <h3 id="confirm-modal-title" class="text-base font-bold text-[#0a2540] dark:text-white">Confirm Simulated Payment Transfer</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-400">
+                Please verify the transfer parameters below. This request will be evaluated by the Redis velocity limiter and 8-D vector fraud engine before atomic double-entry settlement.
+            </p>
+            <div id="confirm-modal-summary" class="p-3.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs space-y-1.5"></div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" onclick="closeTransferConfirmationModal()"
+                        class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-700 text-xs font-semibold">
+                    Cancel
+                </button>
+                <button id="confirm-transfer-submit-btn" type="button" onclick="executeConfirmedPayment()"
+                        class="px-4 py-2 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white text-xs font-semibold">
+                    Confirm &amp; Execute Transfer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- MODAL 2: TRANSACTION & 8-D VECTOR INSPECTOR DIALOG                 -->
+    <!-- ================================================================== -->
+    <div id="tx-detail-modal" role="dialog" aria-modal="true" aria-labelledby="tx-modal-title"
+         class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 max-w-3xl w-full p-6 shadow-xl space-y-4 my-8 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 id="tx-modal-title" class="text-base font-bold text-[#0a2540] dark:text-white">Transaction &amp; 8-D Vector Telemetry</h3>
+                <button type="button" onclick="closeTxDetailModal()" class="text-xs font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                    Close ✕
+                </button>
+            </div>
+            <div id="tx-modal-body" class="space-y-4 text-xs"></div>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- APPLICATION JAVASCRIPT                                             -->
+    <!-- ================================================================== -->
+    <script>
+        // Application in-memory state (never stores plaintext passwords or long-lived tokens in localStorage)
+        const state = {
+            user: null,
+            csrfToken: null,
+            currentView: 'overview',
+            txPage: 0,
+            ledgerPage: 0,
+            pendingPaymentPayload: null,
+            recentTransactionsCache: []
+        };
+
+        const FEATURE_LABELS = [
+            'f0: Normalized Amount',
+            'f1: Cross-Border / IP Distance',
+            'f2: Merchant Category Risk',
+            'f3: 60s Velocity Burst',
+            'f4: Nocturnal UTC Window',
+            'f5: Amount / Baseline Ratio',
+            'f6: Untrusted Device Anomaly',
+            'f7: New Account Immaturity'
+        ];
+
+        // Strictly escape dynamic text before inserting into HTML templates
+        function escapeHtml(value) {
+            if (value === null || value === undefined) return '';
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function readCookie(name) {
+            const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? decodeURIComponent(match[2]) : null;
+        }
+
+        function generateUuidV4() {
+            if (window.crypto && window.crypto.randomUUID) {
+                return window.crypto.randomUUID();
+            }
+            return 'idem-' + Date.now() + '-' + Math.random().toString(16).slice(2, 10);
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = {
+                info: 'bg-slate-900 text-white border-slate-700',
+                success: 'bg-emerald-800 text-white border-emerald-600',
+                error: 'bg-red-800 text-white border-red-600',
+                warn: 'bg-amber-800 text-white border-amber-600'
+            };
+            toast.className = `pointer-events-auto px-4 py-3 rounded-lg border shadow-lg text-xs font-medium flex items-center justify-between gap-3 ${colors[type] || colors.info}`;
+            const span = document.createElement('span');
+            span.textContent = message;
+            const closeBtn = document.createElement('button');
+            closeBtn.type = 'button';
+            closeBtn.textContent = '✕';
+            closeBtn.className = 'opacity-75 hover:opacity-100 font-bold';
+            closeBtn.onclick = () => toast.remove();
+            toast.appendChild(span);
+            toast.appendChild(closeBtn);
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4500);
+        }
+
+        async function apiFetch(path, options = {}) {
+            const headers = Object.assign({ 'Accept': 'application/json' }, options.headers || {});
+            if (options.body && !headers['Content-Type']) {
+                headers['Content-Type'] = 'application/json';
+            }
+            const csrf = readCookie('ps_csrf_token') || state.csrfToken;
+            if (csrf) {
+                headers['X-CSRF-Token'] = csrf;
+            }
+
+            const response = await fetch(path, Object.assign({}, options, {
+                headers,
+                credentials: 'same-origin'
+            }));
+
+            const correlationId = response.headers.get('X-Correlation-Id');
+            let body = null;
+            const contentType = response.headers.get('Content-Type') || '';
+            if (contentType.includes('application/json')) {
+                body = await response.json();
+            }
+
+            if (!response.ok) {
+                const msg = (body && body.message) ? body.message : `Request failed with HTTP ${response.status}`;
+                const err = new Error(msg);
+                err.status = response.status;
+                err.body = body;
+                err.correlationId = correlationId;
+                throw err;
+            }
+            return { data: body, status: response.status, correlationId };
+        }
+
+        function renderStatusBadge(status) {
+            const styles = {
+                APPROVED: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800',
+                FLAGGED_FRAUD: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/70 dark:text-red-300 dark:border-red-800',
+                REVIEW_REQUIRED: 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/70 dark:text-amber-300 dark:border-amber-800',
+                DECLINED: 'bg-slate-100 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+                FAILED: 'bg-rose-50 text-rose-700 border-rose-200',
+                PENDING: 'bg-blue-50 text-blue-700 border-blue-200'
+            };
+            const cls = styles[status] || styles.PENDING;
+            return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold border ${cls}">${escapeHtml(status)}</span>`;
+        }
+
+        // ====================================================================
+        // AUTHENTICATION FLOWS
+        // ====================================================================
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('login-form');
+            const regForm = document.getElementById('register-form');
+            const resetForm = document.getElementById('reset-form-container');
+            const tabs = {
+                login: document.getElementById('tab-login'),
+                register: document.getElementById('tab-register'),
+                reset: document.getElementById('tab-reset')
+            };
+
+            hideAuthBanners();
+            loginForm.classList.toggle('hidden', tab !== 'login');
+            regForm.classList.toggle('hidden', tab !== 'register');
+            resetForm.classList.toggle('hidden', tab !== 'reset');
+
+            Object.keys(tabs).forEach(k => {
+                const active = k === tab;
+                tabs[k].setAttribute('aria-selected', active ? 'true' : 'false');
+                tabs[k].className = active
+                    ? 'flex-1 pb-3 text-sm font-semibold border-b-2 border-[#0052cc] text-[#0052cc] dark:text-blue-400 dark:border-blue-400'
+                    : 'flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400';
+            });
+        }
+
+        function showAuthError(msg) {
+            const el = document.getElementById('auth-error-banner');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function showAuthSuccess(msg) {
+            const el = document.getElementById('auth-success-banner');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function hideAuthBanners() {
+            document.getElementById('auth-error-banner').classList.add('hidden');
+            document.getElementById('auth-success-banner').classList.add('hidden');
+        }
+
+        function fillDemoCredentials(email, password) {
+            switchAuthTab('login');
+            document.getElementById('login-email').value = email;
+            document.getElementById('login-password').value = password;
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            hideAuthBanners();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            try {
+                const { data } = await apiFetch('/api/v1/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+                onSessionEstablished(data);
+                showToast(`Signed in as ${data.user.email} (${data.user.role})`, 'success');
+            } catch (err) {
+                showAuthError(err.message);
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            hideAuthBanners();
+            const fullName = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const initialCurrency = document.getElementById('reg-currency').value;
+            try {
+                const { data } = await apiFetch('/api/v1/auth/register', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, fullName, password, initialCurrency })
+                });
+                onSessionEstablished(data);
+                showToast(`Account created & ${initialCurrency} wallet provisioned!`, 'success');
+            } catch (err) {
+                if (err.body && err.body.fieldErrors) {
+                    const details = Object.values(err.body.fieldErrors).join(' ');
+                    showAuthError(details);
+                } else {
+                    showAuthError(err.message);
+                }
+            }
+        }
+
+        async function handlePasswordResetRequest(event) {
+            event.preventDefault();
+            hideAuthBanners();
+            const email = document.getElementById('reset-email').value.trim();
+            try {
+                const { data } = await apiFetch('/api/v1/auth/password-reset/request', {
+                    method: 'POST',
+                    body: JSON.stringify({ email })
+                });
+                showAuthSuccess(data.message);
+            } catch (err) {
+                showAuthError(err.message);
+            }
+        }
+
+        async function handlePasswordResetConfirm(event) {
+            event.preventDefault();
+            hideAuthBanners();
+            const resetToken = document.getElementById('reset-token').value.trim();
+            const newPassword = document.getElementById('reset-new-password').value;
+            try {
+                const { data } = await apiFetch('/api/v1/auth/password-reset/confirm', {
+                    method: 'POST',
+                    body: JSON.stringify({ resetToken, newPassword })
+                });
+                showAuthSuccess(data.message);
+                switchAuthTab('login');
+            } catch (err) {
+                showAuthError(err.message);
+            }
+        }
+
+        function onSessionEstablished(sessionData) {
+            state.user = sessionData.user || sessionData;
+            if (sessionData.csrfToken) {
+                state.csrfToken = sessionData.csrfToken;
+            }
+            document.getElementById('auth-view').classList.add('hidden');
+            document.getElementById('app-shell').classList.remove('hidden');
+            document.getElementById('user-role-badge').textContent = state.user.role;
+            document.getElementById('user-email-display').textContent = state.user.email;
+            generateNewIdempotencyKey();
+            loadRecipientDirectory();
+            navigateTo('overview');
+        }
+
+        async function tryRestoreSession() {
+            try {
+                const { data } = await apiFetch('/api/v1/auth/me');
+                onSessionEstablished({ user: data });
+            } catch (_) {
+                // Attempt silent refresh token rotation if refresh cookie is present
+                try {
+                    const { data } = await apiFetch('/api/v1/auth/refresh', { method: 'POST' });
+                    onSessionEstablished(data);
+                } catch (__) {
+                    document.getElementById('auth-view').classList.remove('hidden');
+                    document.getElementById('app-shell').classList.add('hidden');
+                }
+            }
+        }
+
+        async function manualTokenRefresh() {
+            try {
+                const { data } = await apiFetch('/api/v1/auth/refresh', { method: 'POST' });
+                state.user = data.user;
+                state.csrfToken = data.csrfToken;
+                showToast('Refresh token rotated and new short-lived access JWT issued.', 'success');
+                loadSettingsTelemetry();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await apiFetch('/api/v1/auth/logout', { method: 'POST' });
+            } catch (_) {}
+            state.user = null;
+            state.csrfToken = null;
+            document.getElementById('app-shell').classList.add('hidden');
+            document.getElementById('auth-view').classList.remove('hidden');
+            showToast('Signed out and refresh token family revoked.', 'info');
+        }
+
+        // ====================================================================
+        // NAVIGATION & THEME
+        // ====================================================================
+        function toggleMobileNav() {
+            document.getElementById('nav-links').classList.toggle('hidden');
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function navigateTo(view) {
+            state.currentView = view;
+            const views = ['overview', 'payments', 'ledger', 'risk', 'disputes', 'settings'];
+            views.forEach(v => {
+                document.getElementById(`view-${v}`).classList.toggle('hidden', v !== view);
+            });
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const active = btn.getAttribute('data-nav') === view;
+                btn.className = active
+                    ? 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left bg-[#0052cc] text-white'
+                    : 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white';
+            });
+
+            const meta = {
+                overview: ['Account Overview', 'Real-time wallet balances, transaction status distribution, and quarantined alerts.'],
+                payments: ['Payments & Risk Telemetry Simulator', 'Execute idempotent transfers, test synthetic fraud vectors, and trigger velocity bursts.'],
+                ledger: ['Immutable Double-Entry Ledger', 'Inspect ACID debit/credit journal entries and verify zero-sum reconciliation.'],
+                risk: ['Risk Operations Center', 'Review quarantined transactions, inspect 8-D behavioral vectors, and audit decisions.'],
+                disputes: ['AI Dispute Copilot (RAG)', 'Retrieve OpenSearch historical cases and compliance policies for three-point investigation reports.'],
+                settings: ['Settings & System Telemetry', 'Session security controls, Redis cache hit metrics, OpenSearch index status, and Kafka outbox health.']
+            };
+            document.getElementById('page-title').textContent = meta[view][0];
+            document.getElementById('page-subtitle').textContent = meta[view][1];
+
+            if (view === 'overview') loadOverviewData();
+            if (view === 'payments') loadTransactions(0);
+            if (view === 'ledger') {
+                loadLedgerEntries(0);
+                loadReconciliationReport();
+            }
+            if (view === 'risk') {
+                loadRiskQueue();
+                loadAuditLogs();
+            }
+            if (view === 'disputes') populateRagTransactionSelector();
+            if (view === 'settings') loadSettingsTelemetry();
+        }
+
+        // ====================================================================
+        // OVERVIEW VIEW
+        // ====================================================================
+        async function loadOverviewData() {
+            try {
+                const { data } = await apiFetch('/api/v1/payments/overview');
+                renderOverviewWallets(data.wallets || []);
+                renderOverviewBreakdown(data.totalTransactions || 0, data.statusBreakdown || {});
+                renderOverviewRecent(data.recentTransactions || []);
+                renderOverviewAlerts(data.riskAlerts || []);
+                state.recentTransactionsCache = data.recentTransactions || [];
+            } catch (err) {
+                showToast(`Failed to load overview: ${err.message}`, 'error');
+            }
+        }
+
+        function renderOverviewWallets(wallets) {
+            const grid = document.getElementById('overview-wallets-grid');
+            if (!wallets.length) {
+                grid.innerHTML = `<div class="p-4 rounded-xl bg-white dark:bg-slate-900 border text-xs text-slate-500">No wallets found.</div>`;
+                return;
+            }
+            grid.innerHTML = wallets.map(w => `
+                <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">${escapeHtml(w.currency)} Wallet</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">${escapeHtml(w.status)}</span>
+                    </div>
+                    <div class="my-3">
+                        <div class="text-2xl font-bold tracking-tight text-[#0a2540] dark:text-white mono">
+                            ${escapeHtml(Number(w.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 }))}
+                            <span class="text-sm font-semibold text-slate-500">${escapeHtml(w.currency)}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <span class="mono">${escapeHtml(w.accountNumber)}</span>
+                        <span>ACID Locked</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderOverviewBreakdown(total, breakdown) {
+            document.getElementById('overview-total-tx').textContent = `Total: ${total}`;
+            const bar = document.getElementById('overview-status-bar');
+            const cards = document.getElementById('overview-status-cards');
+
+            const palette = {
+                APPROVED: 'bg-emerald-500',
+                FLAGGED_FRAUD: 'bg-red-500',
+                REVIEW_REQUIRED: 'bg-amber-500',
+                DECLINED: 'bg-slate-500',
+                FAILED: 'bg-rose-500',
+                PENDING: 'bg-blue-500'
+            };
+
+            if (total > 0) {
+                bar.innerHTML = Object.entries(breakdown).map(([status, count]) => {
+                    if (!count) return '';
+                    const pct = Math.max(2, (count / total) * 100);
+                    return `<div class="${palette[status] || 'bg-blue-500'}" style="width:${pct}%" title="${escapeHtml(status)}: ${count}"></div>`;
+                }).join('');
+            } else {
+                bar.innerHTML = '';
+            }
+
+            cards.innerHTML = Object.entries(breakdown).map(([status, count]) => `
+                <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
+                    <div class="text-[10px] font-semibold text-slate-500 uppercase">${escapeHtml(status)}</div>
+                    <div class="text-lg font-bold mono mt-0.5">${Number(count)}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderOverviewRecent(transactions) {
+            const tbody = document.getElementById('overview-recent-tbody');
+            if (!transactions.length) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">No payment transactions recorded yet.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = transactions.map(tx => `
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+                    <td class="py-2.5 pr-3">
+                        <div class="font-semibold text-slate-800 dark:text-slate-200">${escapeHtml(tx.merchantName)}</div>
+                        <div class="text-[11px] text-slate-500">${escapeHtml(tx.senderEmail)} → ${escapeHtml(tx.recipientEmail)}</div>
+                    </td>
+                    <td class="py-2.5 px-3 mono font-semibold">${escapeHtml(Number(tx.amount).toFixed(2))} ${escapeHtml(tx.currency)}</td>
+                    <td class="py-2.5 px-3 mono">${escapeHtml(Number(tx.riskScore).toFixed(4))}</td>
+                    <td class="py-2.5 px-3">${renderStatusBadge(tx.status)}</td>
+                    <td class="py-2.5 pl-3 text-right space-x-2">
+                        <button type="button" onclick="inspectTransaction('${escapeHtml(tx.id)}')" class="text-[#0052cc] dark:text-blue-400 font-semibold hover:underline">Vector</button>
+                        <button type="button" onclick="openRagForTransaction('${escapeHtml(tx.id)}')" class="text-slate-600 dark:text-slate-300 font-semibold hover:underline">RAG</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderOverviewAlerts(alerts) {
+            const list = document.getElementById('overview-alerts-list');
+            if (!alerts.length) {
+                list.innerHTML = `<div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/40 text-xs text-slate-500">No active quarantined risk alerts.</div>`;
+                return;
+            }
+            list.innerHTML = alerts.map(a => `
+                <div class="p-3.5 rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50/40 dark:bg-red-950/20 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        ${renderStatusBadge(a.status)}
+                        <span class="mono text-xs font-bold text-red-700 dark:text-red-300">Risk: ${escapeHtml(Number(a.riskScore).toFixed(4))}</span>
+                    </div>
+                    <div class="text-xs font-semibold">${escapeHtml(a.merchantName)} (${escapeHtml(Number(a.amount).toFixed(2))} ${escapeHtml(a.currency)})</div>
+                    <div class="text-[11px] text-slate-500">Corridor: ${escapeHtml(a.sourceCountry)} → ${escapeHtml(a.destinationCountry)} (${escapeHtml(a.ipDistanceKm)} km)</div>
+                    <div class="pt-1 flex gap-3">
+                        <button type="button" onclick="openRagForTransaction('${escapeHtml(a.id)}')" class="text-[11px] font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">Run RAG Audit →</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ====================================================================
+        // PAYMENTS & SIMULATOR
+        // ====================================================================
+        async function loadRecipientDirectory() {
+            try {
+                const { data } = await apiFetch('/api/v1/wallets/directory');
+                const dl = document.getElementById('recipient-suggestions');
+                dl.innerHTML = (data || []).map(item =>
+                    `<option value="${escapeHtml(item.ownerEmail)}">${escapeHtml(item.ownerName)} (${escapeHtml(item.accountNumber)} - ${escapeHtml(item.currency)})</option>`
+                ).join('');
+            } catch (_) {}
+        }
+
+        function generateNewIdempotencyKey() {
+            const input = document.getElementById('pay-idempotency-key');
+            if (input) input.value = 'idem-' + generateUuidV4();
+        }
+
+        function applyPaymentPreset(preset) {
+            if (preset === 'normal') {
+                document.getElementById('pay-amount').value = '85.00';
+                document.getElementById('pay-merchant').value = 'Cloud SaaS Subscription';
+                document.getElementById('pay-category').value = 'SAAS_SUBSCRIPTION';
+                document.getElementById('pay-src-country').value = 'US';
+                document.getElementById('pay-dst-country').value = 'US';
+                document.getElementById('pay-ip-dist').value = '15';
+                document.getElementById('pay-device-trust').value = '0.97';
+                document.getElementById('pay-account-age').value = '400';
+            } else if (preset === 'crypto') {
+                document.getElementById('pay-amount').value = '4850.00';
+                document.getElementById('pay-merchant').value = 'Offshore Crypto Bridge Exchange';
+                document.getElementById('pay-category').value = 'CRYPTO_EXCHANGE';
+                document.getElementById('pay-src-country').value = 'US';
+                document.getElementById('pay-dst-country').value = 'SG';
+                document.getElementById('pay-ip-dist').value = '7800';
+                document.getElementById('pay-device-trust').value = '0.18';
+                document.getElementById('pay-account-age').value = '12';
+            } else if (preset === 'ato') {
+                document.getElementById('pay-amount').value = '1950.00';
+                document.getElementById('pay-merchant').value = 'Geneva Luxury Horology';
+                document.getElementById('pay-category').value = 'LUXURY_GOODS';
+                document.getElementById('pay-src-country').value = 'US';
+                document.getElementById('pay-dst-country').value = 'CH';
+                document.getElementById('pay-ip-dist').value = '8600';
+                document.getElementById('pay-device-trust').value = '0.12';
+                document.getElementById('pay-account-age').value = '90';
+            }
+            if (!document.getElementById('pay-keep-idem-key').checked) {
+                generateNewIdempotencyKey();
+            }
+        }
+
+        function openTransferConfirmationModal(event) {
+            event.preventDefault();
+            const payload = {
+                recipientIdentifier: document.getElementById('pay-recipient').value.trim(),
+                amount: Number(document.getElementById('pay-amount').value),
+                currency: document.getElementById('pay-currency').value,
+                merchantName: document.getElementById('pay-merchant').value.trim(),
+                merchantCategory: document.getElementById('pay-category').value,
+                sourceCountry: document.getElementById('pay-src-country').value.trim().toUpperCase(),
+                destinationCountry: document.getElementById('pay-dst-country').value.trim().toUpperCase(),
+                ipDistanceKm: Number(document.getElementById('pay-ip-dist').value),
+                deviceTrustScore: Number(document.getElementById('pay-device-trust').value),
+                accountAgeDays: Number(document.getElementById('pay-account-age').value)
+            };
+            const idempotencyKey = document.getElementById('pay-idempotency-key').value.trim();
+            state.pendingPaymentPayload = { payload, idempotencyKey };
+
+            document.getElementById('confirm-modal-summary').innerHTML = `
+                <div class="flex justify-between"><span>Recipient:</span><span class="font-semibold">${escapeHtml(payload.recipientIdentifier)}</span></div>
+                <div class="flex justify-between"><span>Amount:</span><span class="mono font-bold text-[#0052cc] dark:text-blue-400">${escapeHtml(payload.amount.toFixed(2))} ${escapeHtml(payload.currency)}</span></div>
+                <div class="flex justify-between"><span>Merchant (MCC):</span><span>${escapeHtml(payload.merchantName)} (${escapeHtml(payload.merchantCategory)})</span></div>
+                <div class="flex justify-between"><span>Corridor / IP Distance:</span><span>${escapeHtml(payload.sourceCountry)} → ${escapeHtml(payload.destinationCountry)} (${escapeHtml(payload.ipDistanceKm)} km)</span></div>
+                <div class="flex justify-between"><span>Idempotency-Key:</span><span class="mono text-[11px]">${escapeHtml(idempotencyKey)}</span></div>
+            `;
+            document.getElementById('confirm-transfer-modal').classList.remove('hidden');
+        }
+
+        function closeTransferConfirmationModal() {
+            document.getElementById('confirm-transfer-modal').classList.add('hidden');
+        }
+
+        async function executeConfirmedPayment() {
+            if (!state.pendingPaymentPayload) return;
+            const { payload, idempotencyKey } = state.pendingPaymentPayload;
+            closeTransferConfirmationModal();
+
+            try {
+                const { data, correlationId } = await apiFetch('/api/v1/payments/process', {
+                    method: 'POST',
+                    headers: { 'Idempotency-Key': idempotencyKey },
+                    body: JSON.stringify(payload)
+                });
+                renderLatestPaymentResult(data, correlationId);
+                if (!document.getElementById('pay-keep-idem-key').checked) {
+                    generateNewIdempotencyKey();
+                }
+                showToast(
+                    data.idempotentReplay
+                        ? `Idempotent Replay (200 OK): Returned existing tx ${data.id.slice(0, 8)}`
+                        : `Payment processed (${data.status}) in ${data.processingLatencyMs}ms`,
+                    data.status === 'APPROVED' ? 'success' : 'warn'
+                );
+                loadTransactions(0);
+            } catch (err) {
+                showToast(`${err.message} ${err.body && err.body.errorCode ? '[' + err.body.errorCode + ']' : ''}`, 'error');
+            }
+        }
+
+        function renderLatestPaymentResult(tx, correlationId) {
+            const box = document.getElementById('latest-payment-result');
+            box.classList.remove('hidden');
+            box.innerHTML = `
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3 mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Execution Result</span>
+                        ${renderStatusBadge(tx.status)}
+                        ${tx.idempotentReplay ? '<span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 text-[11px] font-semibold">IDEMPOTENT REPLAY (DEDUPLICATED)</span>' : ''}
+                    </div>
+                    <span class="mono text-xs text-slate-500">Server Latency: <strong>${escapeHtml(tx.processingLatencyMs)} ms</strong> | Correlation: ${escapeHtml(correlationId || tx.correlationId)}</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <div>
+                        <span class="text-slate-400 block">Transaction ID</span>
+                        <span class="mono font-semibold">${escapeHtml(tx.id)}</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block">Heuristic Risk Score (0–0.99)</span>
+                        <span class="mono font-bold">${escapeHtml(Number(tx.riskScore).toFixed(4))} (${escapeHtml(tx.scoringSource)})</span>
+                    </div>
+                    <div class="flex items-center justify-end gap-2">
+                        <button type="button" onclick="inspectTransaction('${escapeHtml(tx.id)}')" class="px-3 py-1.5 rounded border border-slate-300 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">Inspect 8-D Vector</button>
+                        <button type="button" onclick="openRagForTransaction('${escapeHtml(tx.id)}')" class="px-3 py-1.5 rounded bg-[#0052cc] text-white font-semibold hover:bg-[#003e99]">Dispute Copilot</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function runVelocityAttackSimulation() {
+            const btn = document.getElementById('velocity-sim-btn');
+            btn.disabled = true;
+            btn.textContent = 'Executing 7 Rapid Transfers...';
+            try {
+                const { data } = await apiFetch('/api/v1/risk/simulate-velocity', { method: 'POST' });
+                showToast(
+                    `Velocity Burst Complete: ${data.approvedCount} approved, ${data.flaggedOrBlockedCount} quarantined after exceeding ${data.maxWindowThreshold}/${data.windowSeconds}s limit (${data.engineMode}).`,
+                    'warn'
+                );
+                if (data.transactions && data.transactions.length) {
+                    renderLatestPaymentResult(data.transactions[data.transactions.length - 1]);
+                }
+                loadTransactions(0);
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Simulate Velocity Attack (7 Attempts / 60s Window)';
+            }
+        }
+
+        let searchDebounceTimer = null;
+        function debouncedLoadTransactions() {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => loadTransactions(0), 250);
+        }
+
+        async function loadTransactions(page = 0) {
+            state.txPage = Math.max(0, page);
+            const status = document.getElementById('tx-filter-status').value;
+            const currency = document.getElementById('tx-filter-currency').value;
+            const search = document.getElementById('tx-filter-search').value.trim();
+
+            const params = new URLSearchParams({ page: state.txPage, size: 8 });
+            if (status) params.set('status', status);
+            if (currency) params.set('currency', currency);
+            if (search) params.set('search', search);
+
+            try {
+                const { data } = await apiFetch(`/api/v1/payments?${params.toString()}`);
+                const content = data.content || [];
+                state.recentTransactionsCache = content;
+                const tbody = document.getElementById('payments-table-tbody');
+
+                if (!content.length) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-400">No matching transactions found.</td></tr>`;
+                } else {
+                    tbody.innerHTML = content.map(tx => `
+                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+                            <td class="py-2.5 pr-3">
+                                <div class="mono font-semibold text-slate-800 dark:text-slate-200">${escapeHtml(tx.id.slice(0, 8))}…</div>
+                                <div class="mono text-[10px] text-slate-400">${escapeHtml(tx.idempotencyKey)}</div>
+                            </td>
+                            <td class="py-2.5 px-3">
+                                <div class="font-semibold">${escapeHtml(tx.merchantName)}</div>
+                                <div class="text-[11px] text-slate-500">${escapeHtml(tx.merchantCategory)} (${escapeHtml(tx.sourceCountry)}→${escapeHtml(tx.destinationCountry)})</div>
+                            </td>
+                            <td class="py-2.5 px-3 mono font-semibold">${escapeHtml(Number(tx.amount).toFixed(2))} ${escapeHtml(tx.currency)}</td>
+                            <td class="py-2.5 px-3 mono font-semibold">${escapeHtml(Number(tx.riskScore).toFixed(4))}</td>
+                            <td class="py-2.5 px-3">${renderStatusBadge(tx.status)}</td>
+                            <td class="py-2.5 px-3 mono text-slate-500">${escapeHtml(tx.processingLatencyMs)} ms</td>
+                            <td class="py-2.5 pl-3 text-right space-x-2">
+                                <button type="button" onclick="inspectTransaction('${escapeHtml(tx.id)}')" class="text-[#0052cc] dark:text-blue-400 font-semibold hover:underline">Details</button>
+                                <button type="button" onclick="openRagForTransaction('${escapeHtml(tx.id)}')" class="text-slate-600 dark:text-slate-300 font-semibold hover:underline">RAG</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+
+                document.getElementById('tx-pagination-info').textContent =
+                    `Page ${(data.number || 0) + 1} of ${Math.max(1, data.totalPages || 1)} (${data.totalElements || 0} total)`;
+                document.getElementById('tx-prev-btn').disabled = data.first;
+                document.getElementById('tx-next-btn').disabled = data.last;
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function changeTxPage(delta) {
+            loadTransactions(state.txPage + delta);
+        }
+
+        // ====================================================================
+        // LEDGER & RECONCILIATION
+        // ====================================================================
+        async function loadLedgerEntries(page = 0) {
+            state.ledgerPage = Math.max(0, page);
+            const entryType = document.getElementById('ledger-filter-type').value;
+            const currency = document.getElementById('ledger-filter-currency').value;
+            const params = new URLSearchParams({ page: state.ledgerPage, size: 12 });
+            if (entryType) params.set('entryType', entryType);
+            if (currency) params.set('currency', currency);
+
+            try {
+                const { data } = await apiFetch(`/api/v1/ledger?${params.toString()}`);
+                const entries = data.content || [];
+                const tbody = document.getElementById('ledger-table-tbody');
+
+                if (!entries.length) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="py-6 text-center text-slate-400">No ledger entries match the current filter.</td></tr>`;
+                } else {
+                    tbody.innerHTML = entries.map(e => `
+                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+                            <td class="py-2.5 pr-3 mono text-[11px]">${escapeHtml(e.id.slice(0, 8))}…</td>
+                            <td class="py-2.5 px-3 mono text-[11px]">
+                                <button type="button" onclick="inspectTransaction('${escapeHtml(e.transactionId)}')" class="text-[#0052cc] dark:text-blue-400 hover:underline">
+                                    ${escapeHtml(e.transactionId.slice(0, 8))}…
+                                </button>
+                            </td>
+                            <td class="py-2.5 px-3 mono font-medium">${escapeHtml(e.accountNumber)}</td>
+                            <td class="py-2.5 px-3">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold ${e.entryType === 'DEBIT' ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'}">
+                                    ${escapeHtml(e.entryType)}
+                                </span>
+                            </td>
+                            <td class="py-2.5 px-3 mono font-semibold">${escapeHtml(Number(e.amount).toFixed(4))} ${escapeHtml(e.currency)}</td>
+                            <td class="py-2.5 px-3 mono">${escapeHtml(Number(e.balanceAfter).toFixed(4))} ${escapeHtml(e.currency)}</td>
+                            <td class="py-2.5 px-3 text-slate-600 dark:text-slate-400">${escapeHtml(e.description)}</td>
+                            <td class="py-2.5 pl-3 mono text-[11px] text-slate-400">${escapeHtml(new Date(e.createdAt).toLocaleString())}</td>
+                        </tr>
+                    `).join('');
+                }
+
+                document.getElementById('ledger-pagination-info').textContent =
+                    `Page ${(data.number || 0) + 1} of ${Math.max(1, data.totalPages || 1)} (${data.totalElements || 0} entries)`;
+                document.getElementById('ledger-prev-btn').disabled = data.first;
+                document.getElementById('ledger-next-btn').disabled = data.last;
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function changeLedgerPage(delta) {
+            loadLedgerEntries(state.ledgerPage + delta);
+        }
+
+        async function loadReconciliationReport() {
+            const panel = document.getElementById('reconciliation-panel');
+            if (state.user && state.user.role === 'CUSTOMER') {
+                panel.innerHTML = `<div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 text-xs text-slate-500">Global cross-account reconciliation requires <strong>RISK_ANALYST</strong> or <strong>ADMIN</strong> role privileges. Sign in as <code>elena.rostova@payshield.demo</code> or <code>marcus.vance@payshield.demo</code> to execute global zero-sum verification.</div>`;
+                return;
+            }
+            try {
+                const { data } = await apiFetch('/api/v1/ledger/reconciliation');
+                const rows = (data.currencySummaries || []).map(c => `
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="font-bold">${escapeHtml(c.currency)} Ledger</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${c.zeroSumBalanced ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                                ${c.zeroSumBalanced ? 'ZERO-SUM BALANCED' : 'DISCREPANCY'}
+                            </span>
+                        </div>
+                        <div class="mono text-[11px] space-y-0.5">
+                            <div>Total Debits (${c.debitEntryCount}): ${escapeHtml(Number(c.totalDebits).toFixed(4))}</div>
+                            <div>Total Credits (${c.creditEntryCount}): ${escapeHtml(Number(c.totalCredits).toFixed(4))}</div>
+                            <div class="font-bold">Net Difference: ${escapeHtml(Number(c.netDifference).toFixed(4))}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                panel.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${data.overallBalanced ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                                ${data.overallBalanced ? '✓ ALL CURRENCIES & DOUBLE-ENTRY INVARIANTS VERIFIED' : '⚠ LEDGER ANOMALY DETECTED'}
+                            </span>
+                            <span>Settled Transfers Verified: <strong>${data.approvedTransactionsWithCompleteDoubleEntry} / ${data.totalApprovedTransactions}</strong></span>
+                            <span>Quarantined Leakage Count: <strong>${data.unapprovedTransactionsWithUnexpectedEntries}</strong></span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">${rows}</div>
+                    </div>
+                `;
+            } catch (err) {
+                panel.innerHTML = `<div class="text-red-600">${escapeHtml(err.message)}</div>`;
+            }
+        }
+
+        // ====================================================================
+        // RISK OPERATIONS & ANALYST REVIEW
+        // ====================================================================
+        async function loadRiskQueue() {
+            const status = document.getElementById('risk-queue-filter').value;
+            const params = new URLSearchParams({ page: 0, size: 20 });
+            if (status) params.set('status', status);
+
+            try {
+                const { data } = await apiFetch(`/api/v1/risk/transactions?${params.toString()}`);
+                const items = data.content || [];
+                const container = document.getElementById('risk-queue-list');
+                const canReview = state.user && (state.user.role === 'RISK_ANALYST' || state.user.role === 'ADMIN');
+
+                if (!items.length) {
+                    container.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">No suspicious or quarantined transactions in queue.</div>`;
+                    return;
+                }
+
+                container.innerHTML = items.map(tx => {
+                    const factorsHtml = (tx.riskFactors || []).map(f => `
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[11px]">
+                            <strong>${escapeHtml(f.label)}:</strong> ${escapeHtml(Number(f.featureValue).toFixed(2))} (${escapeHtml(f.severity)})
+                        </span>
+                    `).join(' ');
+
+                    const casesHtml = (tx.matchedCases || []).map(c => `
+                        <div class="text-[11px] text-slate-600 dark:text-slate-400">
+                            • <span class="mono font-semibold">${escapeHtml(c.caseId)}</span>: ${escapeHtml(c.title)}
+                            (rawCosine=${escapeHtml(Number(c.rawCosineSimilarity).toFixed(4))}, normalizedScore=${escapeHtml(Number(c.normalizedRiskContribution).toFixed(4))})
+                        </div>
+                    `).join('');
+
+                    const reviewControls = (canReview && (tx.status === 'FLAGGED_FRAUD' || tx.status === 'REVIEW_REQUIRED')) ? `
+                        <div class="pt-3 mt-3 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-2">
+                            <input id="review-notes-${escapeHtml(tx.id)}" type="text" placeholder="Mandatory analyst review notes..."
+                                   value="Verified session telemetry and compliance policy controls."
+                                   class="flex-1 min-w-[220px] rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs" />
+                            <button type="button" onclick="submitAnalystReview('${escapeHtml(tx.id)}', 'APPROVE')"
+                                    class="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold">
+                                Approve &amp; Settle Ledger
+                            </button>
+                            <button type="button" onclick="submitAnalystReview('${escapeHtml(tx.id)}', 'DECLINE')"
+                                    class="px-3 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white text-xs font-semibold">
+                                Decline Transfer
+                            </button>
+                        </div>
+                    ` : (tx.reviewedBy ? `
+                        <div class="pt-2 text-[11px] text-slate-500">
+                            Reviewed by <strong>${escapeHtml(tx.reviewedBy)}</strong> (${escapeHtml(tx.analystDecision)}): ${escapeHtml(tx.analystNotes)}
+                        </div>
+                    ` : `<div class="pt-2 text-[11px] text-slate-400">Sign in as RISK_ANALYST or ADMIN to approve or decline quarantined transfers.</div>`);
+
+                    return `
+                        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-800/30 space-y-2">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    ${renderStatusBadge(tx.status)}
+                                    <span class="mono text-xs font-bold">Heuristic Risk: ${escapeHtml(Number(tx.riskScore).toFixed(4))}</span>
+                                    <span class="text-[11px] text-slate-500">(${escapeHtml(tx.scoringSource)})</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="inspectTransaction('${escapeHtml(tx.id)}')" class="text-xs font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">8-D Vector</button>
+                                    <button type="button" onclick="openRagForTransaction('${escapeHtml(tx.id)}')" class="px-2.5 py-1 rounded bg-[#0052cc] text-white text-xs font-semibold">RAG Copilot</button>
+                                </div>
+                            </div>
+                            <div class="text-xs font-semibold">
+                                ${escapeHtml(tx.merchantName)} — <span class="mono">${escapeHtml(Number(tx.amount).toFixed(2))} ${escapeHtml(tx.currency)}</span>
+                                (${escapeHtml(tx.senderEmail)} → ${escapeHtml(tx.recipientEmail)})
+                            </div>
+                            <div class="flex flex-wrap gap-1.5">${factorsHtml}</div>
+                            <div class="space-y-0.5 pt-1">${casesHtml}</div>
+                            ${reviewControls}
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        async function submitAnalystReview(txId, decision) {
+            const notesInput = document.getElementById(`review-notes-${txId}`);
+            const notes = notesInput ? notesInput.value.trim() : 'Reviewed by Risk Analyst';
+            try {
+                const { data } = await apiFetch(`/api/v1/risk/transactions/${txId}/review`, {
+                    method: 'POST',
+                    body: JSON.stringify({ decision, notes })
+                });
+                showToast(`Transaction ${txId.slice(0, 8)} marked ${data.status}`, 'success');
+                loadRiskQueue();
+                loadAuditLogs();
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        async function loadAuditLogs() {
+            const box = document.getElementById('audit-log-container');
+            if (state.user && state.user.role === 'CUSTOMER') {
+                box.innerHTML = `<div class="text-xs text-slate-500">Security audit trail requires RISK_ANALYST or ADMIN role.</div>`;
+                return;
+            }
+            try {
+                const { data } = await apiFetch('/api/v1/audit?page=0&size=15');
+                const logs = data.content || [];
+                box.innerHTML = `
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase">
+                                <th class="py-2 pr-3">Event Type</th>
+                                <th class="py-2 px-3">Actor</th>
+                                <th class="py-2 px-3">Resource</th>
+                                <th class="py-2 px-3">Details</th>
+                                <th class="py-2 pl-3">Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                            ${logs.map(l => `
+                                <tr>
+                                    <td class="py-2 pr-3 mono font-semibold">${escapeHtml(l.eventType)}</td>
+                                    <td class="py-2 px-3">${escapeHtml(l.actorEmail)}</td>
+                                    <td class="py-2 px-3 mono text-[11px]">${escapeHtml(l.resourceType)}:${escapeHtml((l.resourceId || '').slice(0, 8))}</td>
+                                    <td class="py-2 px-3 text-slate-600 dark:text-slate-400">${escapeHtml(l.details)}</td>
+                                    <td class="py-2 pl-3 mono text-[11px] text-slate-400">${escapeHtml(new Date(l.createdAt).toLocaleTimeString())}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (err) {
+                box.innerHTML = `<div class="text-xs text-red-600">${escapeHtml(err.message)}</div>`;
+            }
+        }
+
+        // ====================================================================
+        // AI DISPUTE COPILOT (RAG)
+        // ====================================================================
+        async function populateRagTransactionSelector(selectedTxId = null) {
+            try {
+                const { data } = await apiFetch('/api/v1/payments?page=0&size=25');
+                const items = data.content || [];
+                const select = document.getElementById('rag-tx-select');
+                select.innerHTML = items.map(tx => `
+                    <option value="${escapeHtml(tx.id)}" ${selectedTxId === tx.id ? 'selected' : ''}>
+                        [${escapeHtml(tx.status)}] ${escapeHtml(tx.merchantName)} — ${escapeHtml(Number(tx.amount).toFixed(2))} ${escapeHtml(tx.currency)} (Risk: ${escapeHtml(Number(tx.riskScore).toFixed(4))}) — ${escapeHtml(tx.id.slice(0, 8))}
+                    </option>
+                `).join('');
+            } catch (_) {}
+        }
+
+        async function openRagForTransaction(txId) {
+            navigateTo('disputes');
+            await populateRagTransactionSelector(txId);
+            await runRagAuditById(txId);
+        }
+
+        async function executeSelectedRagAudit() {
+            const select = document.getElementById('rag-tx-select');
+            if (!select || !select.value) return;
+            await runRagAuditById(select.value);
+        }
+
+        async function runRagAuditById(txId) {
+            const container = document.getElementById('rag-report-container');
+            container.innerHTML = `<div class="bg-white dark:bg-slate-900 rounded-xl border p-6 text-xs text-slate-500">Retrieving top-K OpenSearch behavioral vectors, local compliance policy corpus, and generating structured report...</div>`;
+            try {
+                const { data } = await apiFetch(`/api/v1/payments/${txId}/dispute-rag-audit`, { method: 'POST' });
+                renderRagReport(data);
+            } catch (err) {
+                container.innerHTML = `<div class="bg-red-50 border border-red-200 rounded-xl p-5 text-xs text-red-700">${escapeHtml(err.message)}</div>`;
+            }
+        }
+
+        function renderRagReport(report) {
+            const container = document.getElementById('rag-report-container');
+            const isCacheHit = report.cacheStatus === 'CACHE_HIT';
+
+            const casesHtml = (report.retrievedHistoricalCases || []).map(c => `
+                <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="mono font-bold text-[#0052cc] dark:text-blue-400">${escapeHtml(c.caseId)}</span>
+                        <span class="mono text-[11px] font-semibold">rawCosine=${escapeHtml(Number(c.rawCosineSimilarity).toFixed(4))} | normRisk=${escapeHtml(Number(c.normalizedRiskContribution).toFixed(4))}</span>
+                    </div>
+                    <div class="font-semibold text-xs">${escapeHtml(c.title)}</div>
+                    <div class="text-[11px] text-slate-600 dark:text-slate-400">${escapeHtml(c.summary)}</div>
+                    <div class="text-[10px] text-slate-400">Policy Cross-Ref: ${escapeHtml(c.policyReference)} | Source: ${escapeHtml(c.retrievalSource)}</div>
+                </div>
+            `).join('');
+
+            const policiesHtml = (report.retrievedPolicies || []).map(p => `
+                <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="mono font-bold text-emerald-700 dark:text-emerald-400">${escapeHtml(p.policyId)} (v${escapeHtml(p.version)})</span>
+                        <span class="text-[10px] font-semibold uppercase text-slate-400">${escapeHtml(p.category)}</span>
+                    </div>
+                    <div class="font-semibold text-xs">${escapeHtml(p.section)} — ${escapeHtml(p.title)}</div>
+                    <div class="text-[11px] text-slate-600 dark:text-slate-400">${escapeHtml(p.complianceRequirement)}</div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-5">
+                    <!-- Header & Cache / Provenance Badges -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h4 class="text-base font-bold text-[#0a2540] dark:text-white">RAG Dispute Investigation Report</h4>
+                                ${renderStatusBadge(report.transactionStatus)}
+                            </div>
+                            <p class="mono text-[11px] text-slate-500 mt-1">Tx: ${escapeHtml(report.transactionId)} | SHA-256 Cache Key: ${escapeHtml(report.cacheSignatureSha256.slice(0, 24))}…</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${isCacheHit ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-blue-100 text-blue-800 border border-blue-300'}">
+                                ${escapeHtml(report.cacheStatus)} (${escapeHtml(report.cacheBackend)})
+                            </span>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${report.llmGenerated ? 'bg-purple-100 text-purple-800' : 'bg-amber-100 text-amber-900 border border-amber-300'}">
+                                ${report.llmGenerated ? 'LLM GENERATED: ' + escapeHtml(report.modelIdentifier) : 'HEURISTIC OFFLINE FALLBACK (NON-LLM)'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- PII Redacted Prompt Context -->
+                    <div class="p-3 rounded-lg bg-slate-100 dark:bg-slate-800/80 text-[11px] mono text-slate-700 dark:text-slate-300">
+                        <strong>PII-Redacted Context Sent to Analyzer:</strong> ${escapeHtml(report.redactedContextSummary)}
+                    </div>
+
+                    <!-- Structured Three-Point Report (Safe Text Rendering via escapeHtml) -->
+                    <div class="space-y-3">
+                        <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Structured Three-Point Investigation Analysis</h5>
+                        <div class="p-4 rounded-xl border-l-4 border-[#0052cc] bg-blue-50/30 dark:bg-blue-950/20 space-y-1">
+                            <div class="text-xs font-bold text-[#0a2540] dark:text-white">1. Risk Signals &amp; Supporting Evidence</div>
+                            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">${escapeHtml(report.threePointReport.point1RiskSignalsAndEvidence)}</p>
+                        </div>
+                        <div class="p-4 rounded-xl border-l-4 border-emerald-600 bg-emerald-50/30 dark:bg-emerald-950/20 space-y-1">
+                            <div class="text-xs font-bold text-[#0a2540] dark:text-white">2. Relevant Policy &amp; Compliance Concerns</div>
+                            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">${escapeHtml(report.threePointReport.point2RelevantPolicyAndCompliance)}</p>
+                        </div>
+                        <div class="p-4 rounded-xl border-l-4 border-amber-600 bg-amber-50/30 dark:bg-amber-950/20 space-y-1">
+                            <div class="text-xs font-bold text-[#0a2540] dark:text-white">3. Recommended Next Action, Uncertainty &amp; Limitations</div>
+                            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">${escapeHtml(report.threePointReport.point3RecommendedNextActionAndLimitations)}</p>
+                        </div>
+                    </div>
+
+                    <!-- Retrieved Evidence Columns -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-2">
+                        <div class="space-y-2">
+                            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Retrieved Historical Vector Cases (${(report.retrievedHistoricalCases || []).length})</h5>
+                            ${casesHtml}
+                        </div>
+                        <div class="space-y-2">
+                            <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Retrieved Compliance Corpus v${escapeHtml(report.policyCorpusVersion)} (${(report.retrievedPolicies || []).length})</h5>
+                            ${policiesHtml}
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-slate-500 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        ${escapeHtml(report.methodologyAndUncertaintyNotice)}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ====================================================================
+        // TRANSACTION & 8-D VECTOR MODAL INSPECTOR
+        // ====================================================================
+        async function inspectTransaction(txId) {
+            try {
+                const { data } = await apiFetch(`/api/v1/payments/${txId}`);
+                const modal = document.getElementById('tx-detail-modal');
+                const body = document.getElementById('tx-modal-body');
+
+                const vectorBars = (data.featureVector || []).map((val, idx) => {
+                    const pct = Math.round(Math.min(1, Math.max(0, val)) * 100);
+                    return `
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-[11px]">
+                                <span class="font-medium">${escapeHtml(FEATURE_LABELS[idx] || ('f' + idx))}</span>
+                                <span class="mono font-bold">${escapeHtml(Number(val).toFixed(4))}</span>
+                            </div>
+                            <div class="h-2 w-full rounded bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                                <div class="h-full ${val >= 0.7 ? 'bg-red-500' : val >= 0.45 ? 'bg-amber-500' : 'bg-[#0052cc]'}" style="width:${pct}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                const ledgerRows = (data.ledgerEntries || []).map(e => `
+                    <div class="flex items-center justify-between p-2 rounded bg-slate-50 dark:bg-slate-800 mono text-[11px]">
+                        <span>${escapeHtml(e.entryType)} (${escapeHtml(e.accountNumber)})</span>
+                        <span>${escapeHtml(Number(e.amount).toFixed(4))} ${escapeHtml(e.currency)} → Bal: ${escapeHtml(Number(e.balanceAfter).toFixed(4))}</span>
+                    </div>
+                `).join('') || '<div class="text-slate-400">No settlement ledger entries (transaction not in APPROVED state).</div>';
+
+                body.innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
+                        <div><span class="text-slate-400 block">Status</span>${renderStatusBadge(data.status)}</div>
+                        <div><span class="text-slate-400 block">Amount</span><span class="mono font-bold">${escapeHtml(Number(data.amount).toFixed(2))} ${escapeHtml(data.currency)}</span></div>
+                        <div><span class="text-slate-400 block">Heuristic Risk</span><span class="mono font-bold">${escapeHtml(Number(data.riskScore).toFixed(4))}</span></div>
+                        <div><span class="text-slate-400 block">Scoring Engine</span><span class="mono text-[11px]">${escapeHtml(data.scoringSource)}</span></div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-slate-700 dark:text-slate-300 mb-2">8-Dimensional Normalized Behavioral Vector [0.0000 – 1.0000]</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${vectorBars}</div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-slate-700 dark:text-slate-300 mb-2">Double-Entry Journal Postings</h4>
+                        <div class="space-y-1.5">${ledgerRows}</div>
+                    </div>
+
+                    <div class="text-[11px] text-slate-500 pt-2 border-t border-slate-200 dark:border-slate-800">
+                        ${escapeHtml(data.methodologyDisclaimer)}
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function closeTxDetailModal() {
+            document.getElementById('tx-detail-modal').classList.add('hidden');
+        }
+
+        // ====================================================================
+        // SETTINGS & TELEMETRY
+        // ====================================================================
+        async function loadSettingsTelemetry() {
+            if (state.user) {
+                document.getElementById('settings-profile-dl').innerHTML = `
+                    <div class="py-2.5 flex justify-between"><dt class="text-slate-500">User ID</dt><dd class="mono font-medium">${escapeHtml(state.user.id)}</dd></div>
+                    <div class="py-2.5 flex justify-between"><dt class="text-slate-500">Email</dt><dd class="font-semibold">${escapeHtml(state.user.email)}</dd></div>
+                    <div class="py-2.5 flex justify-between"><dt class="text-slate-500">Full Name</dt><dd>${escapeHtml(state.user.fullName)}</dd></div>
+                    <div class="py-2.5 flex justify-between"><dt class="text-slate-500">Authorized Role</dt><dd class="mono font-bold text-[#0052cc] dark:text-blue-400">${escapeHtml(state.user.role)}</dd></div>
+                    <div class="py-2.5 flex justify-between"><dt class="text-slate-500">Active Profile</dt><dd class="mono">${escapeHtml(state.user.environment || 'local')}</dd></div>
+                `;
+            }
+
+            try {
+                const { data } = await apiFetch('/api/v1/risk/metrics');
+                const box = document.getElementById('settings-telemetry-box');
+                box.innerHTML = `
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 space-y-1">
+                        <div class="flex justify-between font-bold">
+                            <span>Redis 7 Velocity &amp; RAG Cache</span>
+                            <span class="mono ${data.redis.healthy ? 'text-emerald-600' : 'text-amber-600'}">${escapeHtml(data.redis.velocityEngineMode)}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500">
+                            Sliding Window: max ${escapeHtml(data.redis.velocityMaxAttempts)} attempts / ${escapeHtml(data.redis.velocityWindowSeconds)}s |
+                            RAG Cache Hits: <strong>${escapeHtml(data.redis.ragCacheHits)}</strong> |
+                            Misses: <strong>${escapeHtml(data.redis.ragCacheMisses)}</strong> (${escapeHtml(data.redis.ragCacheHitRatePercent)}%)
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 space-y-1">
+                        <div class="flex justify-between font-bold">
+                            <span>OpenSearch 2.12 Vector Index (${escapeHtml(data.openSearch.indexName)})</span>
+                            <span class="mono ${data.openSearch.healthy ? 'text-emerald-600' : 'text-amber-600'}">${escapeHtml(data.openSearch.scoringMode)}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500">
+                            Dimension: ${escapeHtml(data.openSearch.vectorDimension)}-D | Flag Threshold: ${escapeHtml(data.openSearch.flagThreshold)} | Decline Threshold: ${escapeHtml(data.openSearch.declineThreshold)}
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 space-y-1">
+                        <div class="flex justify-between font-bold">
+                            <span>Kafka Transactional Outbox (${escapeHtml(data.kafkaOutbox.topic)})</span>
+                            <span class="mono text-emerald-600">Published: ${escapeHtml(data.kafkaOutbox.publishedEvents)}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500">
+                            Pending: ${escapeHtml(data.kafkaOutbox.pendingEvents)} | Dead-Letter (DLT): ${escapeHtml(data.kafkaOutbox.deadLetterEvents)} | Guarantee: ${escapeHtml(data.kafkaOutbox.deliveryGuarantee)}
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 space-y-1">
+                        <div class="flex justify-between font-bold">
+                            <span>AI Dispute Copilot Adapter</span>
+                            <span class="mono">${escapeHtml(data.aiCopilot.configuredProvider)} (Corpus v${escapeHtml(data.aiCopilot.policyCorpusVersion)})</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500">
+                            API Key Configured: ${data.aiCopilot.apiKeyConfigured ? 'Yes (Redacted)' : 'No (Deterministic Offline Fallback Active)'}
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            tryRestoreSession();
+        });
+    </script>
+</body>
+</html>

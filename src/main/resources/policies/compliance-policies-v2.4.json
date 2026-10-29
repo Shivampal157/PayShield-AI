@@ -1,0 +1,62 @@
+[
+  {
+    "policyId": "POL-EFT-101",
+    "version": "2.4.0",
+    "section": "Section 4.1 — Electronic Funds Transfer & Regulation E Unauthorized Dispute Handling",
+    "title": "High-Value & Cross-Border Transfer Verification",
+    "category": "HIGH_VALUE_TRANSFER",
+    "keywords": ["amount", "high_value", "wire", "threshold", "unauthorized", "dispute"],
+    "summary": "Transfers exceeding 2,500.00 in equivalent USD or exceeding 3.0x historical account average require enhanced behavioral telemetry validation before irrevocable settlement.",
+    "complianceRequirement": "If normalized amount feature (f0) >= 0.45 and risk score >= 0.62, place transaction in FLAGGED_FRAUD or REVIEW_REQUIRED status pending customer step-up verification or analyst review within 24 hours."
+  },
+  {
+    "policyId": "POL-VEL-204",
+    "version": "2.4.0",
+    "section": "Section 6.2 — Automated Card/Wallet Testing & Sliding-Window Velocity Controls",
+    "title": "Rolling 60-Second Transaction Velocity Enforcement",
+    "category": "VELOCITY_ABUSE",
+    "keywords": ["velocity", "burst", "rate_limit", "sliding_window", "automated", "scripting"],
+    "summary": "Accounts initiating more than 5 payment attempts within a rolling 60-second window indicate automated credential stuffing, script-driven balance draining, or replay abuse.",
+    "complianceRequirement": "Enforce atomic sliding-window rate limiting via Redis ZSET. Transactions exceeding 5 attempts/60s must be blocked or elevated to critical risk review, and security audit logs must record the burst telemetry."
+  },
+  {
+    "policyId": "POL-GEO-302",
+    "version": "2.4.0",
+    "section": "Section 7.4 — Impossible Travel, Cross-Border Corridor & IP Geolocation Mismatch",
+    "title": "Geolocation Distance & Cross-Border Corridor Anomaly Policy",
+    "category": "GEO_ANOMALY",
+    "keywords": ["cross_border", "ip_distance", "country", "corridor", "impossible_travel", "vpn"],
+    "summary": "Discrepancies between originating account jurisdiction, destination corridor, and IP geodesic distance exceeding 1,500 km correlate strongly with remote session hijacking.",
+    "complianceRequirement": "When cross-border indicator (f1) > 0.50 or IP geodesic distance exceeds 1,500 km alongside low device trust (f6 > 0.40), analysts must verify session provenance and device fingerprint before releasing funds."
+  },
+  {
+    "policyId": "POL-MCC-409",
+    "version": "2.4.0",
+    "section": "Section 8.1 — High-Risk Merchant Category Code (MCC) Controls",
+    "title": "Digital Asset Exchanges, Offshore Gaming & Wire Remittance Counterparties",
+    "category": "MERCHANT_RISK",
+    "keywords": ["merchant", "crypto", "gambling", "wire_transfer", "luxury", "high_risk_mcc"],
+    "summary": "Counterparties categorized under CRYPTO_EXCHANGE, GAMBLING, or OFFSHORE_WIRE carry elevated non-recoverable chargeback and money-mule typology risk.",
+    "complianceRequirement": "Require corroborating account maturity (account age >= 90 days) and clean velocity history for high-risk MCC transfers; otherwise quarantine for Risk Analyst sign-off."
+  },
+  {
+    "policyId": "POL-ATO-501",
+    "version": "2.4.0",
+    "section": "Section 9.3 — Account Takeover (ATO) & New-Device Off-Hours Draining",
+    "title": "Untrusted Device & Nocturnal Window Draining Mitigation",
+    "category": "ACCOUNT_TAKEOVER",
+    "keywords": ["device_trust", "account_age", "off_hours", "takeover", "ato", "session"],
+    "summary": "Transactions executed during off-hours UTC windows (00:00–05:00) from unrecognized devices (deviceTrustScore < 0.50) on newly provisioned or dormant accounts represent primary ATO vectors.",
+    "complianceRequirement": "Preserve immutable evidence snapshot (8-D behavioral vector, top-K cosine similarity matches from fraud-behavior-vectors, and idempotency hash) for dispute arbitration."
+  },
+  {
+    "policyId": "POL-LED-601",
+    "version": "2.4.0",
+    "section": "Section 11.1 — Double-Entry Ledger Integrity & Idempotent Settlement",
+    "title": "Zero-Sum Double-Entry Accounting & Non-Settlement of Declined/Flagged Transfers",
+    "category": "LEDGER_INTEGRITY",
+    "keywords": ["ledger", "double_entry", "reconciliation", "idempotency", "settlement"],
+    "summary": "Every settled transfer (APPROVED) must atomically record one immutable DEBIT entry and one matching CREDIT entry of equal BigDecimal amount in the same currency.",
+    "complianceRequirement": "Transfers marked FLAGGED_FRAUD, REVIEW_REQUIRED, DECLINED, or FAILED must not debit or credit customer wallet balances until explicitly approved, preserving zero-sum ledger reconciliation."
+  }
+]

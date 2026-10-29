@@ -1,0 +1,11 @@
+# Local development profile (supports Docker Compose or embedded H2 via DEMO_EMBEDDED_DB=true)
+spring:
+  datasource:
+    url: ${LOCAL_DB_URL:jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:payshield}}
+    username: ${POSTGRES_USER:payshield_user}
+    password: ${POSTGRES_PASSWORD:payshield_local_pass}
+    driver-class-name: ${LOCAL_DB_DRIVER:org.postgresql.Driver}
+
+payshield:
+  security:
+    demo-seed-enabled: true

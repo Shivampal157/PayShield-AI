@@ -1,0 +1,42 @@
+name: PayShield AI CI
+
+on:
+  push:
+    branches: [ "main", "master", "develop" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-test-verify:
+    name: Secret Scan, JUnit 5 Suite & Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Eclipse Temurin JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Secret & Credential Hygiene Scan
+        run: |
+          echo "Running repository secret hygiene checks..."
+          if [ -f ".env" ]; then
+            echo "ERROR: .env file must not be committed to version control."
+            exit 1
+          fi
+          if grep -RInE "(sk-[a-zA-Z0-9]{20,}|AIza[0-9A-Za-z\-_]{35}|BEGIN RSA PRIVATE KEY)" src/ pom.xml docker-compose.yml; then
+            echo "ERROR: Potential hardcoded API key or private key detected!"
+            exit 1
+          fi
+          echo "Secret scan passed."
+
+      - name: Make mvnw executable
+        run: chmod +x mvnw
+
+      - name: Run Maven Clean Verify (Unit & Integration Tests + JAR Packaging)
+        run: ./mvnw clean verify -B

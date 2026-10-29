@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:payshield_test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  kafka:
+    bootstrap-servers: localhost:19092
+    listener:
+      auto-startup: false
+
+payshield:
+  environment-label: test
+  security:
+    jwt-secret: test-only-hmac-sha256-secret-key-with-sufficient-entropy-for-jws-signing-2026
+    access-token-ttl-seconds: 900
+    refresh-token-ttl-seconds: 86400
+    cookie-secure: false
+    max-login-attempts-per-minute: 8
+    account-lockout-threshold: 5
+    account-lockout-minutes: 15
+    demo-seed-enabled: true
+  opensearch:
+    enabled: true
+    host: localhost
+    port: 19200
+  ai:
+    provider: OFFLINE
+  outbox:
+    poll-interval-ms: 60000
