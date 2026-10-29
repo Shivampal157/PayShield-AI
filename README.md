@@ -21,9 +21,10 @@
   <a href="#-quick-start-60-seconds">Quick Start</a> •
   <a href="#-why-payshield-ai-stands-out">Engineering Tradeoffs</a> •
   <a href="#-system-architecture--flows">Architecture</a> •
-  <a href="#-8-d-behavioral-fraud-engine--opensearch-k-nn">8-D Vector Engine</a> •
-  <a href="#-ai-dispute-copilot-rag">RAG Copilot</a> •
-  <a href="#-rest-api-contract-21-endpoints">API Reference</a> •
+  <a href="#-platform-walkthrough--core-engineering-pillars">Live Section Tour</a> •
+  <a href="#4-8-d-behavioral-fraud-engine--opensearch-k-nn">8-D Vector Engine</a> •
+  <a href="#5-ai-dispute-copilot-rag--context-aware-sha-256-caching">RAG Copilot</a> •
+  <a href="#-rest-api-contract-21-endpoints">API &amp; Swagger</a> •
   <a href="#-verified-test-matrix-1818-passing">Tests</a>
 </p>
 
@@ -37,6 +38,12 @@
 ---
 
 ## ✨ Why PayShield AI Stands Out
+
+<p align="center">
+  <img src="docs/screenshots/02-executive-overview.png" alt="PayShield AI Executive Account Overview Console" width="100%" />
+  <br/>
+  <sub><strong>Live Executive Overview Console:</strong> Real-time currency-aware <code>NUMERIC(19,4)</code> wallets, proportional transaction status distribution, recent payment telemetry, and quarantined fraud alerts.</sub>
+</p>
 
 Most payment portfolio projects stop at `balance = balance - amount` inside a basic CRUD controller. **PayShield AI** implements the actual concurrency, durability, security, and explainability invariants expected in modern FinTech systems:
 
@@ -154,15 +161,64 @@ stateDiagram-v2
 
 ---
 
-## 🧠 Deep Dive: Core Engineering Pillars
+## 🖥️ Platform Walkthrough & Core Engineering Pillars
 
-### 1. Account Security & Refresh-Token Family Protection
+Every module below is served live at `http://localhost:8080/` (`src/main/resources/static/index.html`) backed by real Spring Boot REST APIs, database locks, and risk engines.
+
+### 1. Account Security, RBAC & Refresh-Token Family Protection
+
+<p align="center">
+  <img src="docs/screenshots/01-auth-portal.png" alt="PayShield AI Authentication Portal" width="100%" />
+  <br/>
+  <sub><strong>Authentication &amp; Sandbox Persona Portal:</strong> Supports customer registration with starter wallet provisioning, single-use password reset, and 1-click sandbox sign-in across <code>CUSTOMER</code>, <code>RISK_ANALYST</code>, and <code>ADMIN</code> roles.</sub>
+</p>
+
 - **Cryptographic Hashing:** Passwords hashed with `BCryptPasswordEncoder(12)`; refresh tokens and password-reset tokens are generated via `SecureRandom` (256-bit) and persisted strictly as **SHA-256 hex digests**.
 - **Token Reuse Detection:** Every login establishes a `family_id`. Rotating a refresh token (`POST /api/v1/auth/refresh`) marks the old token `revoked = true` and links `replaced_by_token_hash`. If an attacker (or stolen cookie) replays an already-rotated token, `AuthService` immediately revokes **every token in that `family_id`** and logs `REFRESH_TOKEN_REUSE_DETECTED`.
 - **Dual-Mode Auth + CSRF Defense:** Browser sessions use `HttpOnly`, `SameSite=Lax` cookies (`ps_access_token`, `ps_refresh_token`) protected by double-submit CSRF validation (`X-CSRF-Token` header must match `ps_csrf_token` on `POST`/`PUT`/`PATCH`/`DELETE`). CLI and service clients can authenticate seamlessly with `Authorization: Bearer <jwt>`.
 - **Brute-Force Resilience:** Sliding-window login rate limiting per IP/email + automatic 15-minute account lockout after 5 consecutive failed password attempts.
 
-### 2. 8-D Behavioral Fraud Engine & OpenSearch k-NN
+---
+
+### 2. Payment Simulator, Idempotency & Redis Lua Velocity Control
+
+<p align="center">
+  <img src="docs/screenshots/03-payment-simulator.png" alt="PayShield AI Payment & Risk Telemetry Simulator" width="100%" />
+  <br/>
+  <sub><strong>Payments &amp; Risk Telemetry Simulator:</strong> Test synthetic fraud presets (<em>Normal Domestic</em>, <em>Offshore Crypto</em>, <em>Untrusted ATO</em>), <code>Idempotency-Key</code> replay &amp; <code>409</code> mismatch protection, server latency readouts, and 7-attempt rolling 60-second velocity attacks.</sub>
+</p>
+
+- **Durable Idempotency + Payload Hash Verification:** Each `POST /api/v1/payments/process` call requires an `Idempotency-Key` header. Fast-path Redis `SETNX` prevents duplicate concurrent work while PostgreSQL enforces `UNIQUE (sender_wallet_id, idempotency_key)` alongside a canonical **SHA-256 request payload digest** (`200 OK` replay on identical body; `409 Conflict` on tampered parameters).
+- **Atomic Sliding-Window Velocity Limiting:** `RedisRiskEngine` executes a concurrency-safe **Lua script over a Redis Sorted Set (`ZSET`)** (`ZREMRANGEBYSCORE` $\rightarrow$ `ZADD` $\rightarrow$ `ZCARD` $\rightarrow$ `PEXPIRE`) enforcing a default cap of **5 transfers per rolling 60-second window**, automatically degrading to a thread-safe `ConcurrentHashMap` sliding window if Redis is unreachable.
+
+---
+
+### 3. ACID Double-Entry Ledger & Zero-Sum Reconciliation
+
+<p align="center">
+  <img src="docs/screenshots/04-double-entry-ledger.png" alt="PayShield AI Immutable Double-Entry Ledger and Reconciliation" width="100%" />
+  <br/>
+  <sub><strong>Immutable Double-Entry Journal &amp; Zero-Sum Reconciliation:</strong> Every <code>APPROVED</code> payment writes paired <code>DEBIT</code> and <code>CREDIT</code> rows in the same ACID transaction, verified live across <code>EUR</code>, <code>GBP</code>, and <code>USD</code> ledgers (<code>Net Difference: 0.0000</code>).</sub>
+</p>
+
+- **Deadlock-Free Pessimistic Locking:** Sender and recipient `Wallet` rows are locked via `SELECT ... FOR UPDATE` in **deterministic ascending `UUID` order** so opposite transfers ($A \rightarrow B$ and $B \rightarrow A$) can never deadlock under load.
+- **Zero Quarantine Leakage:** Transactions scored `FLAGGED_FRAUD` or `REVIEW_REQUIRED` are quarantined *before* balance mutation (`Quarantined Leakage Count: 0`). Funds move if and only if a `RISK_ANALYST` or `ADMIN` explicitly approves the transfer under lock.
+
+---
+
+### 4. 8-D Behavioral Fraud Engine & OpenSearch k-NN
+
+<p align="center">
+  <img src="docs/screenshots/05-risk-operations.png" alt="PayShield AI Risk Operations Center" width="100%" />
+  <br/>
+  <sub><strong>Risk Operations Center:</strong> Quarantined <code>FLAGGED_FRAUD</code> &amp; <code>REVIEW_REQUIRED</code> queue displaying explainable risk factors, top-K <code>SYNTH-FRAUD-*</code> similarity matches, analyst <em>Approve &amp; Settle</em> / <em>Decline</em> controls, and the live <code>SecurityAuditLog</code> trail.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/06-8d-vector-inspector.png" alt="PayShield AI 8-D Behavioral Vector Telemetry Modal" width="100%" />
+  <br/>
+  <sub><strong>8-D Behavioral Vector Inspector:</strong> Per-transaction breakdown of all eight normalized risk dimensions (<code>f0</code>–<code>f7</code> in <code>[0.0000, 1.0000]</code>) and magnitude-attenuated similarity score.</sub>
+</p>
 
 Every transaction is mapped into a deterministic **8-dimensional normalized behavioral vector** $\mathbf{x} \in [0.0, 1.0]^8$ and queried against the versioned OpenSearch 2.12 HNSW index `fraud-behavior-vectors` (`cosinesimil`):
 
@@ -204,7 +260,15 @@ $$\text{Score}(\mathbf{q}, \mathbf{r}) = \min\left(0.99,\; \max(0, \cos\theta) \
 
 </details>
 
-### 3. AI Dispute Copilot (RAG) & Context-Aware SHA-256 Caching
+---
+
+### 5. AI Dispute Copilot (RAG) & Context-Aware SHA-256 Caching
+
+<p align="center">
+  <img src="docs/screenshots/07-rag-dispute-copilot.png" alt="PayShield AI RAG Dispute Copilot Investigation Report" width="100%" />
+  <br/>
+  <sub><strong>AI Dispute Copilot (RAG):</strong> Displays SHA-256 <code>CACHE_HIT</code>/<code>CACHE_MISS</code> status, honest <code>HEURISTIC OFFLINE FALLBACK</code> or live LLM generation badge, PII-redacted prompt context (<code>al***@payshield.demo</code>), and structured 3-point compliance analysis.</sub>
+</p>
 
 ```mermaid
 flowchart LR
@@ -223,16 +287,16 @@ flowchart LR
 
 ---
 
-## 🖥️ Responsive Web Console (`src/main/resources/static/index.html`)
+### 6. Session Security Controls & Live Infrastructure Telemetry
 
-Served directly by Spring Boot at `http://localhost:8080/` with zero Node build steps required for local startup, featuring light & dark themes, keyboard-accessible modals, and strict XSS-safe output escaping:
+<p align="center">
+  <img src="docs/screenshots/08-settings-telemetry.png" alt="PayShield AI Settings and Infrastructure Telemetry" width="100%" />
+  <br/>
+  <sub><strong>Settings &amp; System Telemetry:</strong> Inspect active principal metadata, trigger live refresh-token rotation or family revocation, and monitor Redis RAG cache hit rates, OpenSearch 8-D vector index mode, and Kafka transactional outbox delivery counters.</sub>
+</p>
 
-1. **Authentication Portal:** Sign-in, customer registration with currency selection (`USD`/`EUR`/`GBP`), single-use password reset flow, and **1-click Sandbox Persona Quick-Fill** buttons.
-2. **Executive Overview:** Live currency-aware wallet cards, proportional status distribution bar, recent payment telemetry, and active quarantined fraud alerts.
-3. **Payments & Risk Telemetry Simulator:** Synthetic risk presets (*Normal Domestic*, *Offshore Crypto*, *Untrusted ATO*), `Idempotency-Key` generator + replay toggle, confirmation modal, server latency readout, and **1-click Velocity Attack Simulator (7 rapid transfers / 60s)**.
-4. **Immutable Double-Entry Ledger:** Paginated `DEBIT`/`CREDIT` journal table, 8-D feature vector bar inspector modal, and live **Zero-Sum Reconciliation Audit** (`SUM(DEBIT) == SUM(CREDIT)`).
-5. **Risk Operations Center:** Quarantined `FLAGGED_FRAUD` & `REVIEW_REQUIRED` queue with explainable factor badges, top-K case evidence, `RISK_ANALYST` **Approve & Settle** / **Decline** actions, and live `SecurityAuditLog` stream.
-6. **AI Dispute Copilot (RAG):** Interactive dispute auditor displaying `CACHE_HIT`/`CACHE_MISS` badges, PII-redacted prompt context, structured 3-point analysis, and retrieved `SYNTH-FRAUD-*` + `POL-*` cards.
+- **Transactional Outbox Observability:** Tracks `PENDING`, `PUBLISHED`, and `DEAD_LETTER` event counts for the `transaction-events` topic alongside consumer idempotency guarantees (`AT_LEAST_ONCE_OUTBOX_WITH_IDEMPOTENT_CONSUMER`).
+- **Live Degraded-Mode Transparency:** Clearly surfaces whether Redis 7, OpenSearch 2.12, and external LLM adapters are operating against live cluster containers or deterministic degraded-mode fallbacks—never masking outages behind fake green indicators.
 
 ---
 
@@ -292,6 +356,12 @@ java -jar target\payshield-ai-1.0.0.jar --spring.profiles.active=local-embedded
 ---
 
 ## 📡 REST API Contract (21 Endpoints)
+
+<p align="center">
+  <img src="docs/screenshots/09-swagger-openapi.png" alt="PayShield AI OpenAPI 3.0 Swagger UI" width="100%" />
+  <br/>
+  <sub><strong>Interactive OpenAPI 3.0 / Swagger UI (<code>/swagger-ui.html</code>):</strong> Full schema-validated documentation for Authentication, Payments, Double-Entry Ledger, Risk Operations, and AI Dispute Copilot endpoints.</sub>
+</p>
 
 | Domain | Method & Endpoint | Auth / Role | Key Behavior |
 | :--- | :--- | :--- | :--- |
@@ -404,7 +474,7 @@ Execute the complete deterministic unit, concurrency, security, and integration 
 | Test Suite | Tests | Invariants & Scenarios Verified |
 | :--- | :---: | :--- |
 | **`AuthAndSecurityIntegrationTest`** | `5` | Customer registration & EUR starter wallet; weak password `400` field errors; duplicate email `409`; expired JWT rejection (`401`); refresh-token rotation & **token-family revocation on replay**; double-submit CSRF cookie enforcement (`403` vs `200`); single-use password reset; `CUSTOMER` vs `RISK_ANALYST` vs `ADMIN` RBAC boundaries |
-| **`PaymentLedgerAndConcurrencyIntegrationTest`** | `3` | `Idempotency-Key` replay deduplication (`200 OK`) & tampered payload rejection (`409`); **8-thread concurrent overspend race test** ($8 \times \$600$ against $\$1,500$ wallet $\rightarrow$ exactly 2 succeed, 6 fail `422`, final balance $\$300.0000$, zero-sum reconciliation `true`); high-risk `FLAGGED_FRAUD` quarantine $\rightarrow$ RAG `CACHE_MISS`/`CACHE_HIT` $\rightarrow$ Analyst approval settlement & cache invalidation |
+| **`PaymentLedgerAndConcurrencyIntegrationTest`** | `3` | `Idempotency-Key` replay deduplication (`200 OK`) & tampered payload rejection (`409`); **8-thread concurrent overspend race test** (`8 x $600` against `$1,500` wallet $\rightarrow$ exactly 2 succeed, 6 fail `422`, final balance `$300.0000`, zero-sum reconciliation `true`); high-risk `FLAGGED_FRAUD` quarantine $\rightarrow$ RAG `CACHE_MISS`/`CACHE_HIT` $\rightarrow$ Analyst approval settlement & cache invalidation |
 | **`FraudVectorEngineTest`** | `5` | 8-D feature normalization in `[0.0, 1.0]`; cosine similarity & `[0.00, 0.99]` score normalization bounds; low-risk domestic approval; high-risk offshore crypto anomaly detection; OpenSearch unavailable & empty-index deterministic fallbacks |
 | **`RedisRiskEngineTest`** | `3` | Redis Lua `ZSET` sliding-window boundary (`1..5` allowed, `6th` flagged); 10-thread concurrent fallback under Redis outage; SHA-256 RAG cache hit/miss counters & explicit invalidation |
 | **`KafkaOutboxAndConsumerTest`** | `2` | Idempotent consumer duplicate-event protection via `processed_kafka_events`; transactional outbox 3-attempt exponential backoff, transition to `DEAD_LETTER`, and administrative `recoverDeadLetterEvents()` replay |
@@ -430,8 +500,18 @@ payshield-ai/
 ├── pom.xml
 ├── README.md
 ├── docs/
-│   └── assets/
-│       └── payshield-banner.svg
+│   ├── assets/
+│   │   └── payshield-banner.svg
+│   └── screenshots/
+│       ├── 01-auth-portal.png
+│       ├── 02-executive-overview.png
+│       ├── 03-payment-simulator.png
+│       ├── 04-double-entry-ledger.png
+│       ├── 05-risk-operations.png
+│       ├── 06-8d-vector-inspector.png
+│       ├── 07-rag-dispute-copilot.png
+│       ├── 08-settings-telemetry.png
+│       └── 09-swagger-openapi.png
 ├── .github/
 │   └── workflows/
 │       └── ci.yml
