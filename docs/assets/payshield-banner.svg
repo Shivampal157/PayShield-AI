@@ -1,80 +1,105 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="100%" height="auto" role="img" aria-labelledby="bannerTitle bannerDesc">
-  <title id="bannerTitle">PayShield AI — Intelligent Payments. Explainable Risk. Reliable Ledger.</title>
-  <desc id="bannerDesc">Architecture banner for PayShield AI: Java 21, Spring Boot 3, PostgreSQL ACID Double-Entry Ledger, Redis 7 Lua ZSET, OpenSearch 8-D k-NN, Kafka KRaft Outbox, and RAG Dispute Copilot.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 330" width="100%" height="auto" role="img" aria-labelledby="bannerTitle bannerDesc">
+  <title id="bannerTitle">PayShield — Distributed Payment Ledger, Real-Time Vector Risk &amp; Dispute Engine</title>
+  <desc id="bannerDesc">System architecture header for PayShield: Java 21 Virtual Threads, Spring Boot 3.3, PostgreSQL 16 ACID NUMERIC(19,4) + SHA-256 Hash-Chained Ledger, Redis 7 ZSET Lua Velocity, OpenSearch 2.12 8-D k-NN, and Apache Kafka 3.7 KRaft Transactional Outbox.</desc>
   <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#07192E"/>
-      <stop offset="55%" stop-color="#0A2540"/>
-      <stop offset="100%" stop-color="#0F345B"/>
+    <linearGradient id="canvasBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050E1B"/>
+      <stop offset="55%" stop-color="#09192E"/>
+      <stop offset="100%" stop-color="#0D2442"/>
     </linearGradient>
-    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2684FF"/>
+    <linearGradient id="emblemFill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1D4ED8"/>
       <stop offset="100%" stop-color="#0052CC"/>
     </linearGradient>
-    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
-      <path d="M 36 0 L 0 0 0 36" fill="none" stroke="#1E3A5F" stroke-width="0.7" stroke-opacity="0.45"/>
+    <pattern id="techGrid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#1E3A5F" stroke-width="0.6" stroke-opacity="0.38"/>
     </pattern>
   </defs>
 
-  <!-- Canvas -->
-  <rect width="1200" height="320" rx="16" fill="url(#bgGrad)"/>
-  <rect width="1200" height="320" rx="16" fill="url(#grid)"/>
+  <!-- Outer Frame -->
+  <rect width="1200" height="330" rx="14" fill="url(#canvasBg)"/>
+  <rect width="1200" height="330" rx="14" fill="url(#techGrid)"/>
+  <rect x="1" y="1" width="1198" height="328" rx="13" fill="none" stroke="#1E3A5F" stroke-width="1.2"/>
 
-  <!-- Subtle Right-Side Architectural Nodes -->
-  <g transform="translate(830, 48)" opacity="0.92">
-    <rect x="0" y="0" width="315" height="224" rx="12" fill="#0B1F38" stroke="#1E4976" stroke-width="1.2"/>
-    <text x="20" y="28" fill="#64B5F6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700" letter-spacing="1.2">LIVE LEDGER &amp; RISK PIPELINE</text>
-    <line x1="20" y1="40" x2="295" y2="40" stroke="#1E3A5F" stroke-width="1"/>
-
-    <!-- Pipeline Rows -->
-    <circle cx="30" cy="66" r="5" fill="#10B981"/>
-    <text x="46" y="70" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">ACID Double-Entry</text>
-    <text x="220" y="70" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">NUMERIC(19,4)</text>
-
-    <circle cx="30" cy="100" r="5" fill="#3B82F6"/>
-    <text x="46" y="104" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">Velocity ZSET</text>
-    <text x="220" y="104" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">&lt;= 5 / 60s Lua</text>
-
-    <circle cx="30" cy="134" r="5" fill="#F59E0B"/>
-    <text x="46" y="138" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">Vector k-NN</text>
-    <text x="220" y="138" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">8-D Cosine</text>
-
-    <circle cx="30" cy="168" r="5" fill="#8B5CF6"/>
-    <text x="46" y="172" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">Kafka Outbox</text>
-    <text x="220" y="172" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">KRaft + DLT</text>
-
-    <circle cx="30" cy="202" r="5" fill="#06B6D4"/>
-    <text x="46" y="206" fill="#E2E8F0" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">RAG Copilot</text>
-    <text x="220" y="206" fill="#94A3B8" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11">SHA-256 6h</text>
+  <!-- Top Engineering Classification Strip -->
+  <g transform="translate(52, 34)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" letter-spacing="1.4">
+    <rect x="0" y="-14" width="10" height="10" rx="2" fill="#10B981"/>
+    <text x="18" y="-5" fill="#94A3B8" font-weight="600">FINTECH CORE SYSTEMS ARCHITECTURE  //  JAVA 21 LTS · SPRING BOOT 3.3 · FLYWAY V2</text>
   </g>
 
-  <!-- Shield Emblem -->
-  <g transform="translate(56, 62)">
-    <path d="M40 4 L76 18 V48 C76 74 59 95 40 104 C21 95 4 74 4 48 V18 Z" fill="url(#shieldGrad)" stroke="#60A5FA" stroke-width="1.8"/>
-    <path d="M27 53 L36 62 L55 41" fill="none" stroke="#FFFFFF" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Precision Geometric Shield Emblem -->
+  <g transform="translate(52, 64)">
+    <rect x="0" y="0" width="76" height="76" rx="16" fill="#0B1F3A" stroke="#2563EB" stroke-width="1.4"/>
+    <path d="M38 13 L61 22 V39 C61 54 51 64 38 69 C25 64 15 54 15 39 V22 Z" fill="url(#emblemFill)" stroke="#60A5FA" stroke-width="1.4"/>
+    <path d="M28 39 L35 46 L49 31" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 
-  <!-- Title & Tagline -->
-  <text x="154" y="106" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="44" font-weight="800" letter-spacing="-0.8">PayShield AI</text>
-  <text x="156" y="140" fill="#93C5FD" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="19" font-weight="600">Intelligent Payments. Explainable Risk. Reliable Ledger.</text>
-  <text x="156" y="178" fill="#CBD5E1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14.5">Full-stack FinTech payment simulator with ACID double-entry accounting, Redis Lua velocity controls,</text>
-  <text x="156" y="200" fill="#CBD5E1" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14.5">OpenSearch 8-D behavioral k-NN scoring, Kafka transactional outbox, and PII-redacted RAG dispute audits.</text>
+  <!-- Primary Heading & Technical Subtitle -->
+  <text x="148" y="102" fill="#F8FAFC" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-size="42" font-weight="800" letter-spacing="-1">PayShield AI</text>
+  <rect x="418" y="76" width="126" height="24" rx="5" fill="#0F294A" stroke="#1D4ED8" stroke-width="1"/>
+  <text x="481" y="92" fill="#93C5FD" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="700">RELEASE v1.0.0</text>
 
-  <!-- Bottom Architecture Pills -->
-  <g transform="translate(56, 240)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" font-weight="600">
-    <rect x="0" y="0" width="128" height="30" rx="6" fill="#102C4C" stroke="#2563EB" stroke-width="1"/>
-    <text x="64" y="19" fill="#DBEAFE" text-anchor="middle">Java 21 + Boot 3</text>
+  <text x="148" y="132" fill="#93C5FD" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-size="17.5" font-weight="600">
+    ACID Double-Entry Payment Ledger, SHA-256 Journal Hash-Chain &amp; Real-Time Vector Risk Engine
+  </text>
 
-    <rect x="140" y="0" width="136" height="30" rx="6" fill="#102C4C" stroke="#2563EB" stroke-width="1"/>
-    <text x="208" y="19" fill="#DBEAFE" text-anchor="middle">PostgreSQL 16</text>
+  <text x="148" y="166" fill="#CBD5E1" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-size="14">
+    Deadlock-free pessimistic wallet locking, payload-verified idempotency, Redis 7 Lua sliding-window velocity controls,
+  </text>
+  <text x="148" y="187" fill="#CBD5E1" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-size="14">
+    OpenSearch 8-D HNSW behavioral similarity, Kafka 3.7 transactional outbox, and policy-grounded dispute investigation.
+  </text>
 
-    <rect x="288" y="0" width="126" height="30" rx="6" fill="#102C4C" stroke="#2563EB" stroke-width="1"/>
-    <text x="351" y="19" fill="#DBEAFE" text-anchor="middle">Redis 7 ZSET</text>
+  <!-- Bottom Technical Specification Chips -->
+  <g transform="translate(52, 232)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="600">
+    <rect x="0" y="0" width="150" height="58" rx="8" fill="#09192C" stroke="#1E3A5F" stroke-width="1.2"/>
+    <text x="14" y="22" fill="#64748B" font-size="9.5">LEDGER PRECISION</text>
+    <text x="14" y="42" fill="#E2E8F0" font-size="12">NUMERIC(19, 4)</text>
 
-    <rect x="426" y="0" width="144" height="30" rx="6" fill="#102C4C" stroke="#2563EB" stroke-width="1"/>
-    <text x="498" y="19" fill="#DBEAFE" text-anchor="middle">Kafka 3.7 KRaft</text>
+    <rect x="162" y="0" width="166" height="58" rx="8" fill="#09192C" stroke="#1E3A5F" stroke-width="1.2"/>
+    <text x="176" y="22" fill="#64748B" font-size="9.5">TAMPER EVIDENCE</text>
+    <text x="176" y="42" fill="#10B981" font-size="12">SHA-256 Hash Chain</text>
 
-    <rect x="582" y="0" width="154" height="30" rx="6" fill="#102C4C" stroke="#2563EB" stroke-width="1"/>
-    <text x="659" y="19" fill="#DBEAFE" text-anchor="middle">OpenSearch 2.12</text>
+    <rect x="340" y="0" width="164" height="58" rx="8" fill="#09192C" stroke="#1E3A5F" stroke-width="1.2"/>
+    <text x="354" y="22" fill="#64748B" font-size="9.5">CONCURRENCY MODEL</text>
+    <text x="354" y="42" fill="#E2E8F0" font-size="12">UUID FOR UPDATE</text>
+
+    <rect x="516" y="0" width="154" height="58" rx="8" fill="#09192C" stroke="#1E3A5F" stroke-width="1.2"/>
+    <text x="530" y="22" fill="#64748B" font-size="9.5">VELOCITY ENGINE</text>
+    <text x="530" y="42" fill="#60A5FA" font-size="12">Redis ZSET + Lua</text>
+
+    <rect x="682" y="0" width="154" height="58" rx="8" fill="#09192C" stroke="#1E3A5F" stroke-width="1.2"/>
+    <text x="696" y="22" fill="#64748B" font-size="9.5">EVENT DURABILITY</text>
+    <text x="696" y="42" fill="#E2E8F0" font-size="12">KRaft Outbox + DLT</text>
+  </g>
+
+  <!-- Right-Side Deterministic Execution Telemetry Schematic -->
+  <g transform="translate(866, 36)">
+    <rect x="0" y="0" width="286" height="254" rx="10" fill="#081627" stroke="#1E3A5F" stroke-width="1.2"/>
+    <text x="18" y="26" fill="#93C5FD" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5" font-weight="700" letter-spacing="1">TRANSACTION EXECUTION PATH</text>
+    <line x1="18" y1="36" x2="268" y2="36" stroke="#1E3A5F" stroke-width="1"/>
+
+    <!-- Vertical Connector Line -->
+    <line x1="27" y1="58" x2="27" y2="226" stroke="#1E40AF" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+    <circle cx="27" cy="58" r="4.5" fill="#3B82F6"/>
+    <text x="42" y="62" fill="#F1F5F9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="600">1. Idempotency + SHA-256</text>
+    <text x="42" y="76" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5">SETNX fast-path + DB UNIQUE</text>
+
+    <circle cx="27" cy="100" r="4.5" fill="#10B981"/>
+    <text x="42" y="104" fill="#F1F5F9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="600">2. Ordered Row Locking</text>
+    <text x="42" y="118" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5">SELECT ... FOR UPDATE (UUID)</text>
+
+    <circle cx="27" cy="142" r="4.5" fill="#F59E0B"/>
+    <text x="42" y="146" fill="#F1F5F9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="600">3. Lua ZSET &amp; 8-D HNSW</text>
+    <text x="42" y="160" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5">60s window + Cosine [0, 0.99]</text>
+
+    <circle cx="27" cy="184" r="4.5" fill="#38BDF8"/>
+    <text x="42" y="188" fill="#F1F5F9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="600">4. Hash-Chained Journal</text>
+    <text x="42" y="202" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5">DEBIT/CREDIT + prev_hash link</text>
+
+    <circle cx="27" cy="226" r="4.5" fill="#A78BFA"/>
+    <text x="42" y="230" fill="#F1F5F9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="11" font-weight="600">5. ACID Outbox Relay</text>
+    <text x="42" y="244" fill="#64748B" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="9.5">Kafka KRaft + Idempotent Ack</text>
   </g>
 </svg>

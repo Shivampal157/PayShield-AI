@@ -54,7 +54,11 @@ public class PaymentController {
                 AuthController.resolveClientIp(httpRequest)
         );
         HttpStatus status = response.idempotentReplay() ? HttpStatus.OK : HttpStatus.CREATED;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.status(status)
+                .header("X-Idempotent-Replay", String.valueOf(response.idempotentReplay()))
+                .header("X-Risk-Decision", response.status().name())
+                .header("Server-Timing", "ledger;dur=" + response.processingLatencyMs() + ";desc=\"ACID Lock + 8D Vector\"")
+                .body(response);
     }
 
     @GetMapping

@@ -95,6 +95,7 @@ public class GlobalExceptionHandler {
                                                               String path,
                                                               Map<String, String> fieldErrors) {
         Map<String, Object> body = new LinkedHashMap<>();
+        body.put("type", "urn:payshield:error:" + errorCode.toLowerCase(java.util.Locale.ROOT).replace('_', '-'));
         body.put("timestamp", Instant.now().toString());
         body.put("status", status.value());
         body.put("error", status.getReasonPhrase());

@@ -1,6 +1,9 @@
 spring:
   application:
     name: payshield-ai
+  threads:
+    virtual:
+      enabled: ${VIRTUAL_THREADS_ENABLED:true}
   datasource:
     url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:payshield}
     username: ${POSTGRES_USER:payshield_user}

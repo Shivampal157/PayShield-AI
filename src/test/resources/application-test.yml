@@ -11,6 +11,8 @@ spring:
     enabled: true
   kafka:
     bootstrap-servers: localhost:19092
+    admin:
+      auto-create: false
     listener:
       auto-startup: false
 

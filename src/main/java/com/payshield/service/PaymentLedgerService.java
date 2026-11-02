@@ -50,6 +50,7 @@ public class PaymentLedgerService {
     private final FraudVectorEngine fraudVectorEngine;
     private final OutboxPublisherService outboxPublisherService;
     private final SecurityAuditService auditService;
+    private final PaymentMetricsRecorder metricsRecorder;
     private final ObjectMapper objectMapper;
     private final TransactionTemplate transactionTemplate;
 
@@ -61,6 +62,7 @@ public class PaymentLedgerService {
                                 FraudVectorEngine fraudVectorEngine,
                                 OutboxPublisherService outboxPublisherService,
                                 SecurityAuditService auditService,
+                                PaymentMetricsRecorder metricsRecorder,
                                 ObjectMapper objectMapper,
                                 PlatformTransactionManager transactionManager) {
         this.walletRepository = walletRepository;
@@ -71,6 +73,7 @@ public class PaymentLedgerService {
         this.fraudVectorEngine = fraudVectorEngine;
         this.outboxPublisherService = outboxPublisherService;
         this.auditService = auditService;
+        this.metricsRecorder = metricsRecorder;
         this.objectMapper = objectMapper;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
@@ -270,35 +273,36 @@ public class PaymentLedgerService {
             tx.setProcessingLatencyMs(latencyMs);
             paymentRepository.save(tx);
 
-            LedgerEntry debit = new LedgerEntry(
-                    UUID.randomUUID(),
+            createdEntries.add(appendHashChainedLedgerEntry(
                     txId,
-                    senderWallet.getId(),
-                    senderWallet.getAccountNumber(),
+                    senderWallet,
                     LedgerEntryType.DEBIT,
                     amount,
                     currency,
                     newSenderBalance,
                     "Transfer to " + recipientWallet.getAccountNumber() + " (" + tx.getMerchantName() + ")"
-            );
-            LedgerEntry credit = new LedgerEntry(
-                    UUID.randomUUID(),
+            ));
+            createdEntries.add(appendHashChainedLedgerEntry(
                     txId,
-                    recipientWallet.getId(),
-                    recipientWallet.getAccountNumber(),
+                    recipientWallet,
                     LedgerEntryType.CREDIT,
                     amount,
                     currency,
                     newRecipientBalance,
                     "Transfer from " + senderWallet.getAccountNumber() + " (" + tx.getMerchantName() + ")"
-            );
-            createdEntries.add(ledgerRepository.save(debit));
-            createdEntries.add(ledgerRepository.save(credit));
+            ));
         } else {
             long latencyMs = Math.max(1L, (System.nanoTime() - startNanos) / 1_000_000L);
             tx.setProcessingLatencyMs(latencyMs);
             paymentRepository.save(tx);
         }
+
+        metricsRecorder.recordPaymentProcessed(
+                tx.getStatus(),
+                currency,
+                System.nanoTime() - startNanos,
+                velocityResult.exceeded()
+        );
 
         // Write versioned event to transactional outbox inside the same database transaction
         outboxPublisherService.enqueueTransactionEvent(new TransactionEventPayload(
@@ -387,35 +391,31 @@ public class PaymentLedgerService {
             walletRepository.save(senderWallet);
             walletRepository.save(recipientWallet);
 
-            LedgerEntry debit = new LedgerEntry(
-                    UUID.randomUUID(),
+            entries.add(appendHashChainedLedgerEntry(
                     tx.getId(),
-                    senderWallet.getId(),
-                    senderWallet.getAccountNumber(),
+                    senderWallet,
                     LedgerEntryType.DEBIT,
                     tx.getAmount(),
                     tx.getCurrency(),
                     newSenderBalance,
                     "Analyst-approved settlement to " + recipientWallet.getAccountNumber()
-            );
-            LedgerEntry credit = new LedgerEntry(
-                    UUID.randomUUID(),
+            ));
+            entries.add(appendHashChainedLedgerEntry(
                     tx.getId(),
-                    recipientWallet.getId(),
-                    recipientWallet.getAccountNumber(),
+                    recipientWallet,
                     LedgerEntryType.CREDIT,
                     tx.getAmount(),
                     tx.getCurrency(),
                     newRecipientBalance,
                     "Analyst-approved settlement from " + senderWallet.getAccountNumber()
-            );
-            entries.add(ledgerRepository.save(debit));
-            entries.add(ledgerRepository.save(credit));
+            ));
 
             tx.setStatus(PaymentStatus.APPROVED);
         } else {
             tx.setStatus(PaymentStatus.DECLINED);
         }
+
+        metricsRecorder.recordAnalystReview(decision);
 
         tx.setAnalystDecision(decision);
         tx.setAnalystNotes(reviewRequest.notes().trim());
@@ -691,6 +691,57 @@ public class PaymentLedgerService {
             }
         }
 
+        // Verify per-wallet monotonic sequence and SHA-256 cryptographic hash-chain integrity
+        Map<UUID, List<LedgerEntry>> entriesByWallet = new HashMap<>();
+        for (LedgerEntry entry : allEntries) {
+            entriesByWallet.computeIfAbsent(entry.getWalletId(), k -> new ArrayList<>()).add(entry);
+        }
+
+        long verifiedHashChainEntries = 0L;
+        long brokenHashChainLinks = 0L;
+
+        for (Map.Entry<UUID, List<LedgerEntry>> walletChain : entriesByWallet.entrySet()) {
+            UUID walletId = walletChain.getKey();
+            List<LedgerEntry> chain = walletChain.getValue();
+            chain.sort(Comparator.comparingLong(LedgerEntry::getWalletSequence));
+
+            String expectedPreviousHash = LedgerEntry.genesisHashForWallet(walletId);
+            long expectedSequence = 1L;
+
+            for (LedgerEntry entry : chain) {
+                String recomputedHash = LedgerEntry.computeEntryHash(
+                        entry.getWalletSequence(),
+                        entry.getPreviousHash(),
+                        entry.getTransactionId(),
+                        entry.getWalletId(),
+                        entry.getEntryType(),
+                        entry.getAmount(),
+                        entry.getCurrency(),
+                        entry.getBalanceAfter(),
+                        entry.getCreatedAt()
+                );
+
+                boolean sequenceValid = entry.getWalletSequence() == expectedSequence;
+                boolean prevHashValid = expectedPreviousHash.equals(entry.getPreviousHash());
+                boolean entryHashValid = recomputedHash.equals(entry.getEntryHash());
+
+                if (sequenceValid && prevHashValid && entryHashValid) {
+                    verifiedHashChainEntries++;
+                } else {
+                    brokenHashChainLinks++;
+                    anomalies.add(String.format(
+                            "Cryptographic hash-chain violation on wallet %s seq %d (entry %s): seqOk=%s prevHashOk=%s digestOk=%s",
+                            entry.getAccountNumber(), entry.getWalletSequence(), entry.getId(),
+                            sequenceValid, prevHashValid, entryHashValid));
+                }
+
+                expectedPreviousHash = entry.getEntryHash();
+                expectedSequence++;
+            }
+        }
+
+        boolean cryptographicHashChainIntact = brokenHashChainLinks == 0L;
+
         List<CurrencyReconciliationSummary> summaries = new ArrayList<>();
         boolean allCurrenciesBalanced = true;
 
@@ -716,6 +767,7 @@ public class PaymentLedgerService {
         }
 
         boolean overallBalanced = allCurrenciesBalanced
+                && cryptographicHashChainIntact
                 && (totalApproved == approvedWithCompleteEntries)
                 && (unapprovedWithEntries == 0)
                 && anomalies.isEmpty();
@@ -723,6 +775,9 @@ public class PaymentLedgerService {
         return new ReconciliationReportResponse(
                 Instant.now(),
                 overallBalanced,
+                cryptographicHashChainIntact,
+                verifiedHashChainEntries,
+                brokenHashChainLinks,
                 totalApproved,
                 approvedWithCompleteEntries,
                 unapprovedWithEntries,
@@ -808,11 +863,41 @@ public class PaymentLedgerService {
         return HashUtils.sha256Hex(canonical);
     }
 
+    private LedgerEntry appendHashChainedLedgerEntry(UUID transactionId,
+                                                     Wallet lockedWallet,
+                                                     LedgerEntryType entryType,
+                                                     BigDecimal amount,
+                                                     String currency,
+                                                     BigDecimal balanceAfter,
+                                                     String description) {
+        Optional<LedgerEntry> previousEntry = ledgerRepository
+                .findTopByWalletIdOrderByWalletSequenceDesc(lockedWallet.getId());
+        long nextSequence = previousEntry.map(e -> e.getWalletSequence() + 1L).orElse(1L);
+        String previousHash = previousEntry.map(LedgerEntry::getEntryHash)
+                .orElseGet(() -> LedgerEntry.genesisHashForWallet(lockedWallet.getId()));
+
+        LedgerEntry entry = new LedgerEntry(
+                UUID.randomUUID(),
+                transactionId,
+                lockedWallet.getId(),
+                lockedWallet.getAccountNumber(),
+                entryType,
+                amount,
+                currency,
+                balanceAfter,
+                description,
+                nextSequence,
+                previousHash
+        );
+        return ledgerRepository.save(entry);
+    }
+
     private PaymentTransactionResponse verifyAndBuildIdempotentReplay(PaymentTransaction existing, String requestHash) {
         if (!existing.getRequestHash().equals(requestHash)) {
             throw new ApiException(HttpStatus.CONFLICT, "IDEMPOTENCY_PAYLOAD_MISMATCH",
                     "Idempotency-Key was already used with different payment parameters (recipient, amount, currency, or merchant).");
         }
+        metricsRecorder.recordIdempotentReplay();
         List<LedgerEntry> entries = ledgerRepository.findByTransactionIdOrderByEntryTypeAsc(existing.getId());
         return toTransactionResponse(existing, entries, true);
     }
@@ -878,6 +963,9 @@ public class PaymentLedgerService {
                 e.getCurrency(),
                 e.getBalanceAfter(),
                 e.getDescription(),
+                e.getWalletSequence(),
+                e.getPreviousHash(),
+                e.getEntryHash(),
                 e.getCreatedAt()
         );
     }

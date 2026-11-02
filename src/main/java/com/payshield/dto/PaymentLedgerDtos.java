@@ -91,6 +91,9 @@ public final class PaymentLedgerDtos {
             String currency,
             BigDecimal balanceAfter,
             String description,
+            long walletSequence,
+            String previousHash,
+            String entryHash,
             Instant createdAt
     ) {
     }
@@ -146,6 +149,9 @@ public final class PaymentLedgerDtos {
     public record ReconciliationReportResponse(
             Instant generatedAt,
             boolean overallBalanced,
+            boolean cryptographicHashChainIntact,
+            long verifiedHashChainEntries,
+            long brokenHashChainLinks,
             long totalApprovedTransactions,
             long approvedTransactionsWithCompleteDoubleEntry,
             long unapprovedTransactionsWithUnexpectedEntries,

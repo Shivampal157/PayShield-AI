@@ -38,6 +38,7 @@ public class RiskController {
     private final FraudVectorEngine fraudVectorEngine;
     private final OutboxPublisherService outboxPublisherService;
     private final SecurityAuditService securityAuditService;
+    private final PaymentMetricsRecorder metricsRecorder;
     private final AppProperties properties;
 
     public RiskController(PaymentLedgerService paymentLedgerService,
@@ -45,12 +46,14 @@ public class RiskController {
                           FraudVectorEngine fraudVectorEngine,
                           OutboxPublisherService outboxPublisherService,
                           SecurityAuditService securityAuditService,
+                          PaymentMetricsRecorder metricsRecorder,
                           AppProperties properties) {
         this.paymentLedgerService = paymentLedgerService;
         this.redisRiskEngine = redisRiskEngine;
         this.fraudVectorEngine = fraudVectorEngine;
         this.outboxPublisherService = outboxPublisherService;
         this.securityAuditService = securityAuditService;
+        this.metricsRecorder = metricsRecorder;
         this.properties = properties;
     }
 
@@ -142,8 +145,35 @@ public class RiskController {
                 "model", properties.getAi().getModel(),
                 "policyCorpusVersion", RagDisputeCopilotService.POLICY_CORPUS_VERSION
         ));
+        body.put("telemetry", metricsRecorder.snapshotLatencyAndCounters());
 
         return ResponseEntity.ok(body);
+    }
+
+    @PostMapping("/risk/outbox/replay-dlt")
+    @PreAuthorize("hasAnyRole('RISK_ANALYST', 'ADMIN')")
+    @Operation(summary = "Re-queue DEAD_LETTER outbox events back to PENDING and trigger immediate relay")
+    public ResponseEntity<Map<String, Object>> replayDeadLetterOutbox(
+            @AuthenticationPrincipal AuthenticatedUser operator,
+            HttpServletRequest httpRequest) {
+        int recovered = outboxPublisherService.recoverDeadLetterEvents();
+        int relayed = recovered > 0 ? outboxPublisherService.relayPendingEvents() : 0;
+        securityAuditService.recordEvent(
+                operator.userId(),
+                operator.email(),
+                "OUTBOX_DLT_REPLAY",
+                "OUTBOX_EVENT",
+                "transaction-events.DLT",
+                AuthController.resolveClientIp(httpRequest),
+                "Operator triggered DLT replay: recovered=" + recovered + " relayedImmediately=" + relayed
+        );
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("timestamp", Instant.now().toString());
+        result.put("replayedDeadLetterEvents", recovered);
+        result.put("relayedImmediately", relayed);
+        result.put("remainingDeadLetterEvents", outboxPublisherService.countByStatus(OutboxStatus.DEAD_LETTER));
+        result.put("pendingEvents", outboxPublisherService.countByStatus(OutboxStatus.PENDING));
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/audit")

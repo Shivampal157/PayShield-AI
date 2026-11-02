@@ -50,12 +50,21 @@
             --border-subtle: #1e293b;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: var(--bg-canvas);
             color: var(--text-primary);
+            letter-spacing: -0.01em;
         }
         .mono {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-variant-numeric: tabular-nums;
+        }
+        .tech-grid {
+            background-color: #06111f;
+            background-image:
+                linear-gradient(to right, rgba(30, 58, 95, 0.28) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 58, 95, 0.28) 1px, transparent 1px);
+            background-size: 32px 32px;
         }
     </style>
 </head>
@@ -65,23 +74,107 @@
     <div id="toast-container" aria-live="polite" aria-atomic="true" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none px-4 sm:px-0"></div>
 
     <!-- ================================================================== -->
-    <!-- AUTHENTICATION VIEW (Login / Register / Password Reset)            -->
+    <!-- AUTHENTICATION VIEW (Institutional Split-Pane Console)             -->
     <!-- ================================================================== -->
-    <div id="auth-view" class="min-h-screen flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8">
-        <div class="sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="flex items-center justify-center gap-3">
-                <div class="w-11 h-11 rounded-lg bg-[#0052cc] flex items-center justify-center text-white font-bold text-xl shadow-sm">
-                    PS
+    <div id="auth-view" class="min-h-screen grid grid-cols-1 lg:grid-cols-12">
+
+        <!-- Left Architectural Specification Panel -->
+        <div class="hidden lg:flex lg:col-span-6 tech-grid text-slate-100 p-12 flex-col justify-between border-r border-slate-800/90">
+            <div>
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-[#0b1f3a] border border-blue-500/50 flex items-center justify-center shadow-sm">
+                        <svg class="w-6 h-6 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l8 3.5v5.5c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6.5L12 3z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 12.2l2.3 2.3 4.8-4.8"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl font-bold tracking-tight text-white">PayShield AI</span>
+                            <span class="px-2 py-0.5 rounded bg-blue-950/90 border border-blue-700/60 text-[10px] mono font-semibold text-blue-300">CORE v1.0</span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-0.5">Distributed Payment Ledger, Vector Risk &amp; Dispute Engine</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-2xl font-bold tracking-tight text-[#0a2540] dark:text-white">PayShield AI</h1>
-                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Intelligent Payments. Explainable Risk. Reliable Ledger.</p>
+
+                <div class="mt-10 space-y-2">
+                    <div class="text-[11px] mono uppercase tracking-widest text-blue-400 font-semibold">System Architecture Guarantees</div>
+                    <h2 class="text-2xl font-bold tracking-tight text-white leading-snug">
+                        ACID double-entry accounting paired with cryptographic journal verification.
+                    </h2>
+                    <p class="text-sm text-slate-400 leading-relaxed pt-1">
+                        Engineered on Java 21 Virtual Threads and Spring Boot 3.3 with deterministic row locking, sliding-window Lua rate controls, and 8-dimensional behavioral vector quarantine.
+                    </p>
+                </div>
+
+                <div class="mt-8 space-y-3">
+                    <div class="p-3.5 rounded-xl bg-slate-900/75 border border-slate-800 flex items-start justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-semibold text-white">Double-Entry &amp; SHA-256 Hash Chain</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">Immutable DEBIT/CREDIT postings with per-wallet cryptographic sequence links</div>
+                        </div>
+                        <span class="mono text-[10px] px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800/70 text-emerald-300 shrink-0">NUMERIC(19,4)</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl bg-slate-900/75 border border-slate-800 flex items-start justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-semibold text-white">Deadlock-Free Concurrency &amp; Idempotency</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">UUID-ordered SELECT ... FOR UPDATE + canonical SHA-256 payload digest check</div>
+                        </div>
+                        <span class="mono text-[10px] px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800/70 text-blue-300 shrink-0">409 GUARD</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl bg-slate-900/75 border border-slate-800 flex items-start justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-semibold text-white">Pre-Settlement Risk &amp; Velocity Quarantine</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">Redis 7 ZSET Lua 60s window + OpenSearch 2.12 8-D HNSW cosine scoring</div>
+                        </div>
+                        <span class="mono text-[10px] px-2 py-0.5 rounded bg-amber-950/80 border border-amber-800/70 text-amber-300 shrink-0">[0.00, 0.99]</span>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl bg-slate-900/75 border border-slate-800 flex items-start justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-semibold text-white">Transactional Outbox &amp; Policy RAG Audit</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">Kafka 3.7 KRaft relay with DLT recovery + PII-redacted compliance copilot</div>
+                        </div>
+                        <span class="mono text-[10px] px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 shrink-0">CORPUS v2.4</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-800/90 flex items-center justify-between text-xs text-slate-400">
+                <span class="mono text-[11px]">HttpOnly JWT + Double-Submit CSRF + Token Family Rotation</span>
+                <div class="flex items-center gap-4">
+                    <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-blue-400 hover:text-blue-300 font-medium">OpenAPI 3.0 ↗</a>
+                    <a href="/actuator/health" target="_blank" rel="noopener" class="text-slate-300 hover:text-white font-medium">Health Probe ↗</a>
                 </div>
             </div>
         </div>
 
-        <div class="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-            <div class="bg-white dark:bg-slate-900 py-7 px-6 shadow-sm rounded-xl border border-slate-200 dark:border-slate-800 sm:px-8">
+        <!-- Right Authentication Form Column -->
+        <div class="lg:col-span-6 flex flex-col justify-center py-10 px-4 sm:px-8 lg:px-12 bg-slate-50 dark:bg-slate-950">
+            <div class="sm:mx-auto sm:w-full sm:max-w-md lg:hidden mb-6">
+                <div class="flex items-center justify-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-[#0052cc] flex items-center justify-center text-white shadow-sm">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l8 3.5v5.5c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6.5L12 3z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 12.2l2.3 2.3 4.8-4.8"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight text-[#0a2540] dark:text-white">PayShield AI</h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Ledger, Vector Risk &amp; Dispute Console</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sm:mx-auto sm:w-full sm:max-w-md">
+                <div class="mb-5 hidden lg:block">
+                    <h1 class="text-xl font-bold tracking-tight text-[#0a2540] dark:text-white">Operator &amp; Customer Sign-In</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Authenticate into the simulated ledger workspace or select a sandbox role persona below.</p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 py-7 px-6 shadow-sm rounded-xl border border-slate-200 dark:border-slate-800 sm:px-8">
                 <!-- Auth Mode Tabs -->
                 <div class="flex border-b border-slate-200 dark:border-slate-800 mb-6" role="tablist">
                     <button id="tab-login" type="button" role="tab" aria-selected="true"
@@ -211,10 +304,10 @@
                 </div>
             </div>
 
-            <p class="mt-4 text-center text-xs text-slate-500 dark:text-slate-400">
-                Portfolio FinTech Simulator — Simulated Ledger Balances Only (Not a Real-Money Processor).
-                <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-[#0052cc] dark:text-blue-400 underline ml-1">OpenAPI / Swagger UI</a>
-            </p>
+                <p class="mt-4 text-center text-[11px] text-slate-500 dark:text-slate-400">
+                    Engineering Simulation Environment — Simulated <span class="mono">NUMERIC(19,4)</span> Ledger Balances Only.
+                </p>
+            </div>
         </div>
     </div>
 
@@ -224,15 +317,20 @@
     <div id="app-shell" class="hidden min-h-screen flex flex-col lg:flex-row">
 
         <!-- Left Navigation Sidebar -->
-        <aside id="sidebar" class="w-full lg:w-64 bg-[#0a2540] text-white flex-shrink-0 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800">
+        <aside id="sidebar" class="w-full lg:w-64 bg-[#071526] text-white flex-shrink-0 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800">
             <div>
                 <!-- Brand Header -->
-                <div class="px-5 py-4 flex items-center justify-between border-b border-slate-800">
+                <div class="px-5 py-4 flex items-center justify-between border-b border-slate-800/90">
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-[#0052cc] flex items-center justify-center font-bold text-white text-base">PS</div>
+                        <div class="w-9 h-9 rounded-lg bg-[#0052cc] flex items-center justify-center text-white shadow-sm">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l8 3.5v5.5c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6.5L12 3z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 12.2l2.3 2.3 4.8-4.8"/>
+                            </svg>
+                        </div>
                         <div>
-                            <div class="font-bold text-base tracking-tight leading-none">PayShield AI</div>
-                            <div class="text-[11px] text-slate-400 mt-1">Ledger &amp; Risk Platform</div>
+                            <div class="font-bold text-sm tracking-tight leading-none">PayShield AI</div>
+                            <div class="text-[11px] text-slate-400 mt-1 mono">LEDGER · RISK · V2</div>
                         </div>
                     </div>
                     <button type="button" class="lg:hidden text-slate-300 hover:text-white p-1" onclick="toggleMobileNav()" aria-label="Toggle navigation menu">
@@ -243,41 +341,51 @@
                 <!-- Navigation Links -->
                 <nav id="nav-links" class="hidden lg:block px-3 py-4 space-y-1" aria-label="Main Navigation">
                     <button type="button" onclick="navigateTo('overview')" data-nav="overview"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left bg-[#0052cc] text-white">
-                        <span>Overview</span>
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left bg-[#0052cc] text-white">
+                        <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                        <span>Executive Overview</span>
                     </button>
                     <button type="button" onclick="navigateTo('payments')" data-nav="payments"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
-                        <span>Payments &amp; Simulator</span>
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                        <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+                        <span>Payment Simulator</span>
                     </button>
                     <button type="button" onclick="navigateTo('ledger')" data-nav="ledger"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                        <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                         <span>Double-Entry Ledger</span>
                     </button>
                     <button type="button" onclick="navigateTo('risk')" data-nav="risk"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                        <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/></svg>
                         <span>Risk Operations</span>
                     </button>
                     <button type="button" onclick="navigateTo('disputes')" data-nav="disputes"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
-                        <span>AI Dispute Copilot (RAG)</span>
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                        <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+                        <span>Dispute Copilot (RAG)</span>
                     </button>
                     <button type="button" onclick="navigateTo('settings')" data-nav="settings"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
-                        <span>Settings &amp; Telemetry</span>
+                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                        <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span>Telemetry &amp; Controls</span>
                     </button>
                 </nav>
             </div>
 
             <!-- Sidebar Footer -->
-            <div class="hidden lg:block p-4 border-t border-slate-800 text-xs text-slate-400 space-y-2">
+            <div class="hidden lg:block p-4 border-t border-slate-800/90 text-[11px] text-slate-400 space-y-2">
                 <div class="flex items-center justify-between">
-                    <span>Auth Mode:</span>
-                    <span class="font-mono text-emerald-400">HttpOnly + CSRF</span>
+                    <span>Session Guard:</span>
+                    <span class="mono text-emerald-400">HttpOnly + CSRF</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span>API Docs:</span>
+                    <span>Journal Mode:</span>
+                    <span class="mono text-blue-300">SHA-256 Chain</span>
+                </div>
+                <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
                     <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-blue-400 hover:underline">Swagger UI ↗</a>
+                    <a href="/actuator/prometheus" target="_blank" rel="noopener" class="text-slate-400 hover:text-white">Prometheus ↗</a>
                 </div>
             </div>
         </aside>
@@ -287,12 +395,16 @@
             <!-- Top Bar -->
             <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h2 id="page-title" class="text-lg font-bold text-[#0a2540] dark:text-white">Account Overview</h2>
+                    <h2 id="page-title" class="text-lg font-bold text-[#0a2540] dark:text-white">Executive Overview</h2>
                     <p id="page-subtitle" class="text-xs text-slate-500 dark:text-slate-400">Real-time wallet balances, transaction telemetry, and fraud risk indicators.</p>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <span id="user-role-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-[#0052cc] dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                <div class="flex items-center gap-2.5">
+                    <span id="header-telemetry-pill" class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>SHA-256 Ledger</span>
+                    </span>
+                    <span id="user-role-badge" class="px-2.5 py-1 rounded-md text-[11px] mono font-semibold bg-blue-50 text-[#0052cc] dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                         CUSTOMER
                     </span>
                     <span id="user-email-display" class="text-xs font-medium text-slate-700 dark:text-slate-300 hidden sm:inline"></span>
@@ -582,8 +694,8 @@
                     <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
                         <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
                             <div>
-                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Zero-Sum Double-Entry Reconciliation Engine</h3>
-                                <p class="text-xs text-slate-500">Verifies that every APPROVED payment has matching immutable DEBIT and CREDIT entries and net difference = 0.0000.</p>
+                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Zero-Sum &amp; SHA-256 Cryptographic Chain Reconciliation</h3>
+                                <p class="text-xs text-slate-500">Verifies balanced DEBIT/CREDIT postings (net difference = 0.0000) and per-wallet SHA-256 hash-chain continuity across all journals.</p>
                             </div>
                             <button type="button" onclick="loadReconciliationReport()"
                                     class="px-3.5 py-2 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white text-xs font-semibold transition">
@@ -618,7 +730,7 @@
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase">
-                                        <th class="py-2.5 pr-3">Entry ID</th>
+                                        <th class="py-2.5 pr-3">Chain # / SHA-256</th>
                                         <th class="py-2.5 px-3">Transaction ID</th>
                                         <th class="py-2.5 px-3">Account Number</th>
                                         <th class="py-2.5 px-3">Type</th>
@@ -872,6 +984,12 @@
             }));
 
             const correlationId = response.headers.get('X-Correlation-Id');
+            const wireHeaders = {
+                correlationId,
+                idempotentReplay: response.headers.get('X-Idempotent-Replay'),
+                riskDecision: response.headers.get('X-Risk-Decision'),
+                serverTiming: response.headers.get('Server-Timing')
+            };
             let body = null;
             const contentType = response.headers.get('Content-Type') || '';
             if (contentType.includes('application/json')) {
@@ -886,7 +1004,7 @@
                 err.correlationId = correlationId;
                 throw err;
             }
-            return { data: body, status: response.status, correlationId };
+            return { data: body, status: response.status, correlationId, wireHeaders };
         }
 
         function renderStatusBadge(status) {
@@ -1099,17 +1217,17 @@
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 const active = btn.getAttribute('data-nav') === view;
                 btn.className = active
-                    ? 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left bg-[#0052cc] text-white'
-                    : 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white';
+                    ? 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left bg-[#0052cc] text-white'
+                    : 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white';
             });
 
             const meta = {
-                overview: ['Account Overview', 'Real-time wallet balances, transaction status distribution, and quarantined alerts.'],
-                payments: ['Payments & Risk Telemetry Simulator', 'Execute idempotent transfers, test synthetic fraud vectors, and trigger velocity bursts.'],
-                ledger: ['Immutable Double-Entry Ledger', 'Inspect ACID debit/credit journal entries and verify zero-sum reconciliation.'],
+                overview: ['Executive Overview', 'Currency-aware wallet balances, settlement distribution, and quarantined alerts.'],
+                payments: ['Payment & Risk Telemetry Simulator', 'Execute idempotent transfers, inspect wire headers, and trigger 60s velocity bursts.'],
+                ledger: ['Immutable Double-Entry Ledger', 'Inspect ACID debit/credit postings, SHA-256 hash chains, and zero-sum reconciliation.'],
                 risk: ['Risk Operations Center', 'Review quarantined transactions, inspect 8-D behavioral vectors, and audit decisions.'],
-                disputes: ['AI Dispute Copilot (RAG)', 'Retrieve OpenSearch historical cases and compliance policies for three-point investigation reports.'],
-                settings: ['Settings & System Telemetry', 'Session security controls, Redis cache hit metrics, OpenSearch index status, and Kafka outbox health.']
+                disputes: ['Dispute Copilot (RAG)', 'Retrieve OpenSearch historical cases and compliance policies for three-point investigation reports.'],
+                settings: ['Telemetry & Session Controls', 'Micrometer latency percentiles, Redis/OpenSearch posture, token rotation, and Kafka DLT replay.']
             };
             document.getElementById('page-title').textContent = meta[view][0];
             document.getElementById('page-subtitle').textContent = meta[view][1];
@@ -1335,12 +1453,12 @@
             closeTransferConfirmationModal();
 
             try {
-                const { data, correlationId } = await apiFetch('/api/v1/payments/process', {
+                const { data, status, correlationId, wireHeaders } = await apiFetch('/api/v1/payments/process', {
                     method: 'POST',
                     headers: { 'Idempotency-Key': idempotencyKey },
                     body: JSON.stringify(payload)
                 });
-                renderLatestPaymentResult(data, correlationId);
+                renderLatestPaymentResult(data, correlationId, status, wireHeaders);
                 if (!document.getElementById('pay-keep-idem-key').checked) {
                     generateNewIdempotencyKey();
                 }
@@ -1356,17 +1474,22 @@
             }
         }
 
-        function renderLatestPaymentResult(tx, correlationId) {
+        function renderLatestPaymentResult(tx, correlationId, httpStatus = null, wireHeaders = null) {
             const box = document.getElementById('latest-payment-result');
             box.classList.remove('hidden');
+            const effectiveStatus = httpStatus || (tx.idempotentReplay ? 200 : 201);
+            const serverTiming = (wireHeaders && wireHeaders.serverTiming)
+                ? wireHeaders.serverTiming
+                : `ledger;dur=${tx.processingLatencyMs};desc="ACID Lock + 8D Vector"`;
             box.innerHTML = `
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3 mb-3">
                     <div class="flex items-center gap-2">
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Execution Result</span>
+                        <span class="px-2 py-0.5 rounded bg-slate-900 text-emerald-400 dark:bg-slate-800 mono text-[11px] font-semibold">HTTP ${escapeHtml(effectiveStatus)}</span>
                         ${renderStatusBadge(tx.status)}
-                        ${tx.idempotentReplay ? '<span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 text-[11px] font-semibold">IDEMPOTENT REPLAY (DEDUPLICATED)</span>' : ''}
+                        ${tx.idempotentReplay ? '<span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 text-[11px] font-semibold">IDEMPOTENT REPLAY</span>' : ''}
                     </div>
-                    <span class="mono text-xs text-slate-500">Server Latency: <strong>${escapeHtml(tx.processingLatencyMs)} ms</strong> | Correlation: ${escapeHtml(correlationId || tx.correlationId)}</span>
+                    <span class="mono text-xs text-slate-500">Execution: <strong>${escapeHtml(tx.processingLatencyMs)} ms</strong> | Correlation: ${escapeHtml(correlationId || tx.correlationId)}</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                     <div>
@@ -1381,6 +1504,11 @@
                         <button type="button" onclick="inspectTransaction('${escapeHtml(tx.id)}')" class="px-3 py-1.5 rounded border border-slate-300 dark:border-slate-700 font-semibold hover:bg-slate-50 dark:hover:bg-slate-800">Inspect 8-D Vector</button>
                         <button type="button" onclick="openRagForTransaction('${escapeHtml(tx.id)}')" class="px-3 py-1.5 rounded bg-[#0052cc] text-white font-semibold hover:bg-[#003e99]">Dispute Copilot</button>
                     </div>
+                </div>
+                <div class="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] mono text-slate-500 dark:text-slate-400">
+                    <span><strong class="text-slate-700 dark:text-slate-300">X-Idempotent-Replay:</strong> ${escapeHtml(String(tx.idempotentReplay))}</span>
+                    <span><strong class="text-slate-700 dark:text-slate-300">X-Risk-Decision:</strong> ${escapeHtml(tx.status)}</span>
+                    <span><strong class="text-slate-700 dark:text-slate-300">Server-Timing:</strong> ${escapeHtml(serverTiming)}</span>
                 </div>
             `;
         }
@@ -1489,7 +1617,10 @@
                 } else {
                     tbody.innerHTML = entries.map(e => `
                         <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
-                            <td class="py-2.5 pr-3 mono text-[11px]">${escapeHtml(e.id.slice(0, 8))}…</td>
+                            <td class="py-2.5 pr-3 mono text-[11px]" title="Prev SHA-256: ${escapeHtml(e.previousHash || '')}&#10;Entry SHA-256: ${escapeHtml(e.entryHash || '')}">
+                                <div class="font-bold text-slate-800 dark:text-slate-200">#${escapeHtml(e.walletSequence || 1)} <span class="text-emerald-600 dark:text-emerald-400 font-semibold">${escapeHtml((e.entryHash || '').slice(0, 10))}…</span></div>
+                                <div class="text-[10px] text-slate-400">prev:${escapeHtml((e.previousHash || '').slice(0, 8))}…</div>
+                            </td>
                             <td class="py-2.5 px-3 mono text-[11px]">
                                 <button type="button" onclick="inspectTransaction('${escapeHtml(e.transactionId)}')" class="text-[#0052cc] dark:text-blue-400 hover:underline">
                                     ${escapeHtml(e.transactionId.slice(0, 8))}…
@@ -1548,12 +1679,15 @@
 
                 panel.innerHTML = `
                     <div class="space-y-3">
-                        <div class="flex flex-wrap items-center gap-4">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-bold ${data.overallBalanced ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
-                                ${data.overallBalanced ? '✓ ALL CURRENCIES & DOUBLE-ENTRY INVARIANTS VERIFIED' : '⚠ LEDGER ANOMALY DETECTED'}
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span class="px-2.5 py-1 rounded-md text-xs font-bold ${data.overallBalanced ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-red-100 text-red-800 border border-red-300'}">
+                                ${data.overallBalanced ? '✓ ZERO-SUM ACCOUNTING VERIFIED' : '⚠ LEDGER ANOMALY DETECTED'}
                             </span>
-                            <span>Settled Transfers Verified: <strong>${data.approvedTransactionsWithCompleteDoubleEntry} / ${data.totalApprovedTransactions}</strong></span>
-                            <span>Quarantined Leakage Count: <strong>${data.unapprovedTransactionsWithUnexpectedEntries}</strong></span>
+                            <span class="px-2.5 py-1 rounded-md text-xs mono font-bold ${data.cryptographicHashChainIntact ? 'bg-blue-50 text-[#0052cc] border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800' : 'bg-red-100 text-red-800 border border-red-300'}">
+                                ${data.cryptographicHashChainIntact ? `SHA-256 CHAIN INTACT (${data.verifiedHashChainEntries} links · 0 tampered)` : `SHA-256 CHAIN BROKEN (${data.brokenHashChainLinks} tampered)`}
+                            </span>
+                            <span class="text-xs">Settled Transfers: <strong class="mono">${data.approvedTransactionsWithCompleteDoubleEntry} / ${data.totalApprovedTransactions}</strong></span>
+                            <span class="text-xs">Quarantined Leakage: <strong class="mono">${data.unapprovedTransactionsWithUnexpectedEntries}</strong></span>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">${rows}</div>
                     </div>
@@ -1851,11 +1985,11 @@
                 }).join('');
 
                 const ledgerRows = (data.ledgerEntries || []).map(e => `
-                    <div class="flex items-center justify-between p-2 rounded bg-slate-50 dark:bg-slate-800 mono text-[11px]">
-                        <span>${escapeHtml(e.entryType)} (${escapeHtml(e.accountNumber)})</span>
-                        <span>${escapeHtml(Number(e.amount).toFixed(4))} ${escapeHtml(e.currency)} → Bal: ${escapeHtml(Number(e.balanceAfter).toFixed(4))}</span>
+                    <div class="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded bg-slate-50 dark:bg-slate-800 mono text-[11px]">
+                        <span><strong>#${escapeHtml(e.walletSequence || 1)}</strong> ${escapeHtml(e.entryType)} (${escapeHtml(e.accountNumber)}) · <span class="text-slate-400">sha256:${escapeHtml((e.entryHash || '').slice(0, 12))}…</span></span>
+                        <span class="font-semibold">${escapeHtml(Number(e.amount).toFixed(4))} ${escapeHtml(e.currency)} → Bal: ${escapeHtml(Number(e.balanceAfter).toFixed(4))}</span>
                     </div>
-                `).join('') || '<div class="text-slate-400">No settlement ledger entries (transaction not in APPROVED state).</div>';
+                `).join('') || '<div class="text-slate-400">No settlement ledger entries (transaction quarantined prior to settlement).</div>';
 
                 body.innerHTML = `
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
@@ -1905,8 +2039,40 @@
 
             try {
                 const { data } = await apiFetch('/api/v1/risk/metrics');
+                const tel = data.telemetry || {};
+                const canOperate = state.user && (state.user.role === 'RISK_ANALYST' || state.user.role === 'ADMIN');
+                const headerPill = document.getElementById('header-telemetry-pill');
+                if (headerPill && tel.p95LatencyMs !== undefined) {
+                    headerPill.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><span>p95: ${escapeHtml(tel.p95LatencyMs)}ms · SHA-256 Chain</span>`;
+                }
+
                 const box = document.getElementById('settings-telemetry-box');
                 box.innerHTML = `
+                    <div class="p-3.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200/70 dark:border-slate-700 space-y-2">
+                        <div class="flex justify-between font-bold">
+                            <span>Micrometer Execution Histogram (payshield.payments.execution)</span>
+                            <span class="mono text-[#0052cc] dark:text-blue-400">n = ${escapeHtml(tel.recordedExecutions ?? 0)}</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2 pt-1 mono text-[11px]">
+                            <div class="p-2 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <div class="text-[10px] text-slate-400">p50</div>
+                                <div class="font-bold">${escapeHtml(tel.p50LatencyMs ?? 0)} ms</div>
+                            </div>
+                            <div class="p-2 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <div class="text-[10px] text-slate-400">p95</div>
+                                <div class="font-bold">${escapeHtml(tel.p95LatencyMs ?? 0)} ms</div>
+                            </div>
+                            <div class="p-2 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <div class="text-[10px] text-slate-400">p99</div>
+                                <div class="font-bold">${escapeHtml(tel.p99LatencyMs ?? 0)} ms</div>
+                            </div>
+                            <div class="p-2 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                                <div class="text-[10px] text-slate-400">Replays</div>
+                                <div class="font-bold">${escapeHtml(tel.idempotentReplaysTotal ?? 0)}</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 space-y-1">
                         <div class="flex justify-between font-bold">
                             <span>Redis 7 Velocity &amp; RAG Cache</span>
@@ -1929,19 +2095,20 @@
                         </div>
                     </div>
 
-                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 space-y-1">
-                        <div class="flex justify-between font-bold">
+                    <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 space-y-1.5">
+                        <div class="flex justify-between items-center font-bold">
                             <span>Kafka Transactional Outbox (${escapeHtml(data.kafkaOutbox.topic)})</span>
                             <span class="mono text-emerald-600">Published: ${escapeHtml(data.kafkaOutbox.publishedEvents)}</span>
                         </div>
-                        <div class="text-[11px] text-slate-500">
-                            Pending: ${escapeHtml(data.kafkaOutbox.pendingEvents)} | Dead-Letter (DLT): ${escapeHtml(data.kafkaOutbox.deadLetterEvents)} | Guarantee: ${escapeHtml(data.kafkaOutbox.deliveryGuarantee)}
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
+                            <span>Pending: <strong class="mono">${escapeHtml(data.kafkaOutbox.pendingEvents)}</strong> | DLT: <strong class="mono">${escapeHtml(data.kafkaOutbox.deadLetterEvents)}</strong> | ${escapeHtml(data.kafkaOutbox.deliveryGuarantee)}</span>
+                            ${canOperate ? `<button type="button" onclick="replayDeadLetterEvents()" class="px-2.5 py-1 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 font-semibold hover:bg-slate-100">Replay DLT</button>` : ''}
                         </div>
                     </div>
 
                     <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800 space-y-1">
                         <div class="flex justify-between font-bold">
-                            <span>AI Dispute Copilot Adapter</span>
+                            <span>Dispute Copilot Adapter</span>
                             <span class="mono">${escapeHtml(data.aiCopilot.configuredProvider)} (Corpus v${escapeHtml(data.aiCopilot.policyCorpusVersion)})</span>
                         </div>
                         <div class="text-[11px] text-slate-500">
@@ -1949,6 +2116,16 @@
                         </div>
                     </div>
                 `;
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        async function replayDeadLetterEvents() {
+            try {
+                const { data } = await apiFetch('/api/v1/risk/outbox/replay-dlt', { method: 'POST' });
+                showToast(`Outbox DLT Replay executed: ${data.replayedDeadLetterEvents} recovered, ${data.remainingDeadLetterEvents} remaining.`, 'success');
+                loadSettingsTelemetry();
             } catch (err) {
                 showToast(err.message, 'error');
             }
