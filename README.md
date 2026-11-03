@@ -12,6 +12,8 @@
 ![Apache Kafka 3.7](https://img.shields.io/badge/Kafka_3.7-KRaft_Transactional_Outbox-231F20?style=flat-square&logo=apachekafka&logoColor=white)
 ![OpenSearch 2.12](https://img.shields.io/badge/OpenSearch_2.12-8D_HNSW_Cosine-005EB8?style=flat-square&logo=opensearch&logoColor=white)
 ![Verification](https://img.shields.io/badge/Verification-23%2F23_Tests_Passing-059669?style=flat-square)
+<br/><br/>
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Shivampal157/PayShield-AI)
 
 <p align="center">
   <a href="#architectural-guarantees">Guarantees</a> ·

@@ -1,10 +1,11 @@
 services:
   - type: web
     name: payshield-ai
-    runtime: docker
+    env: docker
     plan: free
     region: oregon
     dockerfilePath: ./Dockerfile
+    healthCheckPath: /actuator/health
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: local-embedded
@@ -15,4 +16,5 @@ services:
       - key: AI_PROVIDER
         value: OFFLINE
       - key: APP_COOKIE_SECURE
-        value: "true"
+        value: "false"
+
