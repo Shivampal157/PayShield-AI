@@ -11,7 +11,11 @@
 ![Redis 7](https://img.shields.io/badge/Redis_7-ZSET_Lua_%26_Idempotency-DC382D?style=flat-square&logo=redis&logoColor=white)
 ![Apache Kafka 3.7](https://img.shields.io/badge/Kafka_3.7-KRaft_Transactional_Outbox-231F20?style=flat-square&logo=apachekafka&logoColor=white)
 ![OpenSearch 2.12](https://img.shields.io/badge/OpenSearch_2.12-8D_HNSW_Cosine-005EB8?style=flat-square&logo=opensearch&logoColor=white)
-![Verification](https://img.shields.io/badge/Verification-23%2F23_Tests_Passing-059669?style=flat-square)
+[![Verification](https://img.shields.io/badge/Verification-23%2F23_Tests_Passing-059669?style=flat-square)
+<br/><br/>
+<a href="https://payshield-ai-lezr.onrender.com" target="_blank">
+  <img src="https://img.shields.io/badge/🌐_Live_Demo-payshield--ai--lezr.onrender.com-0052CC?style=for-the-badge&logo=render&logoColor=white" alt="Live Demo on Render" />
+</a>
 <br/><br/>
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Shivampal157/PayShield-AI)
 
@@ -32,6 +36,11 @@
 
 > [!IMPORTANT]
 > **Simulation Scope:** PayShield AI is a reference FinTech backend and operator console engineered for distributed-systems architecture evaluation. All balances are simulated `NUMERIC(19,4)` ledger entries; it does not move real funds, integrate with card networks, or claim calibrated production ML fraud probabilities.
+>
+> 🚀 **Live Cloud Deployment:** [https://payshield-ai-lezr.onrender.com](https://payshield-ai-lezr.onrender.com)  
+> 📑 **Interactive Swagger / OpenAPI:** [https://payshield-ai-lezr.onrender.com/swagger-ui.html](https://payshield-ai-lezr.onrender.com/swagger-ui.html)  
+> 🩺 **Actuator Health Probe:** [https://payshield-ai-lezr.onrender.com/actuator/health](https://payshield-ai-lezr.onrender.com/actuator/health)  
+> 🔑 **Instant Sign-In:** Click the demo buttons on the login portal, or use `elena.rostova@payshield.demo` / `demo123` (Analyst), `alice.morgan@payshield.demo` / `demo123` (Customer).
 
 ---
 
