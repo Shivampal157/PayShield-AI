@@ -1,0 +1,17 @@
+name: Keep-Alive Ping for Render Deployment
+
+on:
+  schedule:
+    # Pings Render service every 10 minutes to keep it warm and prevent sleep screen
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-render:
+    name: Keep Render Service Awake
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Actuator Health Probe
+        run: |
+          echo "Pinging PayShield AI deployment to maintain zero-spin-down availability..."
+          curl -fsS -m 45 https://payshield-ai-lezr.onrender.com/actuator/health || echo "Probe attempted"
