@@ -197,6 +197,15 @@
                 <div id="auth-error-banner" role="alert" class="hidden mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300"></div>
                 <div id="auth-success-banner" role="status" class="hidden mb-4 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-700 dark:text-emerald-300"></div>
 
+                <!-- Direct Instant Access Action -->
+                <div class="mb-5 p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 text-center space-y-2">
+                    <p class="text-xs text-blue-900 dark:text-blue-200 font-medium">Explore the live payment ledger, 8-D risk engine &amp; RAG copilot:</p>
+                    <button type="button" onclick="fillDemoCredentials('elena.rostova@payshield.demo', 'PayShieldDemo1')"
+                            class="w-full py-2.5 px-4 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white font-semibold text-xs tracking-wide transition shadow flex items-center justify-center gap-2">
+                        <span>🚀 Open Project Directly (Risk Analyst Demo)</span>
+                    </button>
+                </div>
+
                 <!-- LOGIN FORM -->
                 <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
                     <div>
@@ -1064,10 +1073,24 @@
             document.getElementById('auth-success-banner').classList.add('hidden');
         }
 
-        function fillDemoCredentials(email, password) {
+        async function fillDemoCredentials(email, password, autoSubmit = true) {
+            sessionStorage.removeItem('payshield_explicit_logout');
             switchAuthTab('login');
             document.getElementById('login-email').value = email;
             document.getElementById('login-password').value = password;
+            if (autoSubmit) {
+                hideAuthBanners();
+                try {
+                    const { data } = await apiFetch('/api/v1/auth/login', {
+                        method: 'POST',
+                        body: JSON.stringify({ email, password })
+                    });
+                    onSessionEstablished(data);
+                    showToast(`Signed in as ${data.user.email} (${data.user.role})`, 'success');
+                } catch (err) {
+                    showAuthError(err.message);
+                }
+            }
         }
 
         async function handleLogin(event) {
@@ -1167,8 +1190,24 @@
                     const { data } = await apiFetch('/api/v1/auth/refresh', { method: 'POST' });
                     onSessionEstablished(data);
                 } catch (__) {
-                    document.getElementById('auth-view').classList.remove('hidden');
-                    document.getElementById('app-shell').classList.add('hidden');
+                    // If user explicitly signed out in this browser session, keep auth view visible
+                    if (sessionStorage.getItem('payshield_explicit_logout') === 'true') {
+                        document.getElementById('auth-view').classList.remove('hidden');
+                        document.getElementById('app-shell').classList.add('hidden');
+                        return;
+                    }
+                    // DIRECT PROJECT ACCESS: Automatically sign in as Elena Rostova (Risk Analyst)
+                    // so visitors, recruiters, and evaluators land directly inside the live project!
+                    try {
+                        const { data } = await apiFetch('/api/v1/auth/login', {
+                            method: 'POST',
+                            body: JSON.stringify({ email: 'elena.rostova@payshield.demo', password: 'PayShieldDemo1' })
+                        });
+                        onSessionEstablished(data);
+                    } catch (e) {
+                        document.getElementById('auth-view').classList.remove('hidden');
+                        document.getElementById('app-shell').classList.add('hidden');
+                    }
                 }
             }
         }
@@ -1186,6 +1225,7 @@
         }
 
         async function handleLogout() {
+            sessionStorage.setItem('payshield_explicit_logout', 'true');
             try {
                 await apiFetch('/api/v1/auth/logout', { method: 'POST' });
             } catch (_) {}
