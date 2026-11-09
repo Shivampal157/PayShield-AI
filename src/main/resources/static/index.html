@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PayShield AI — Intelligent Payments. Explainable Risk. Reliable Ledger.</title>
+    <title>PayShield — Global Payments, Risk &amp; Double-Entry Ledger</title>
     <!--
       Production Asset Strategy:
       Local development uses Tailwind CSS Play CDN for zero-node-toolchain startup inside Spring Boot.
@@ -123,250 +123,200 @@
     <div id="toast-container" aria-live="polite" aria-atomic="true" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none px-4 sm:px-0"></div>
 
     <!-- ================================================================== -->
-    <!-- AUTHENTICATION VIEW (Institutional Split-Pane Console)             -->
+    <!-- AUTHENTICATION VIEW (DevPilot-Style Centered Minimal Sign-In)      -->
     <!-- ================================================================== -->
-    <div id="auth-view" class="min-h-screen grid grid-cols-1 lg:grid-cols-12">
+    <div id="auth-view" class="relative min-h-screen flex flex-col justify-between overflow-hidden bg-slate-50 dark:bg-slate-950">
+        <!-- Subtle Top Radial Glow (DevPilot Style) -->
+        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,112,186,0.13),transparent_58%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(56,189,248,0.12),transparent_58%)]"></div>
 
-        <!-- Left Architectural Specification Panel -->
-        <div class="hidden lg:flex lg:col-span-6 tech-grid text-slate-100 p-12 flex-col justify-between border-r border-slate-800/90">
-            <div>
-                <div class="flex items-center gap-3.5">
-                    <div class="w-11 h-11 rounded-xl bg-[#0b1f3a] border border-blue-500/50 flex items-center justify-center shadow-sm">
-                        <svg class="w-6 h-6 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l8 3.5v5.5c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6.5L12 3z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 12.2l2.3 2.3 4.8-4.8"/>
+        <!-- Minimal Top Header -->
+        <header class="relative z-10 mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-[#003087] dark:bg-white text-white dark:text-slate-950 flex items-center justify-center shadow-xs">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <rect x="2" y="5" width="20" height="14" rx="3"/>
+                        <path stroke-linecap="round" d="M2 10h20"/>
+                    </svg>
+                </div>
+                <span class="text-base font-bold tracking-tight text-slate-900 dark:text-white">PayShield</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-xs font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition">API Docs</a>
+                <button type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme"
+                        class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Centered Sign-In Card -->
+        <main class="relative z-10 flex flex-1 items-center justify-center px-4 py-8">
+            <div class="w-full max-w-md rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white/95 dark:bg-slate-900/90 p-7 sm:p-8 shadow-xl shadow-slate-900/5 backdrop-blur-xl">
+                <div class="text-center space-y-3 mb-6">
+                    <div class="mx-auto flex w-12 h-12 items-center justify-center rounded-2xl bg-[#003087] dark:bg-white text-white dark:text-slate-950 shadow-sm">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+                            <rect x="2" y="5" width="20" height="14" rx="3"/>
+                            <path stroke-linecap="round" d="M2 10h20M6 15h4"/>
                         </svg>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2.5">
-                            <span class="text-xl font-bold tracking-tight text-white">PayShield AI</span>
-                            <span class="px-2 py-0.5 rounded bg-blue-950/90 border border-blue-700/60 text-[10px] mono font-semibold text-blue-300">CORE v1.0</span>
-                        </div>
-                        <p class="text-xs text-slate-400 mt-0.5">Distributed Payment Ledger, Vector Risk &amp; Dispute Engine</p>
+                    <div class="space-y-1">
+                        <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Sign in to PayShield</h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Multi-currency settlement, real-time risk guard, and double-entry ledger.</p>
                     </div>
                 </div>
 
-                <div class="mt-10 space-y-2">
-                    <div class="text-[11px] mono uppercase tracking-widest text-blue-400 font-semibold">System Architecture Guarantees</div>
-                    <h2 class="text-2xl font-bold tracking-tight text-white leading-snug">
-                        ACID double-entry accounting paired with cryptographic journal verification.
-                    </h2>
-                    <p class="text-sm text-slate-400 leading-relaxed pt-1">
-                        Engineered on Java 21 Virtual Threads and Spring Boot 3.3 with deterministic row locking, sliding-window Lua rate controls, and 8-dimensional behavioral vector quarantine.
-                    </p>
-                </div>
-
-                <div class="mt-8 space-y-3">
-                    <div class="p-3.5 rounded-xl bg-slate-900/75 border border-slate-800 flex items-start justify-between gap-4">
-                        <div>
-                            <div class="text-xs font-semibold text-white">Double-Entry &amp; SHA-256 Hash Chain</div>
-                            <div class="text-[11px] text-slate-400 mt-0.5">Immutable DEBIT/CREDIT postings with per-wallet cryptographic sequence links</div>
-                        </div>
-                        <span class="mono text-[10px] px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800/70 text-emerald-300 shrink-0">NUMERIC(19,4)</span>
-                    </div>
-
-                    <div class="p-3.5 rounded-xl bg-slate-900/75 border border-slate-800 flex items-start justify-between gap-4">
-                        <div>
-                            <div class="text-xs font-semibold text-white">Deadlock-Free Concurrency &amp; Idempotency</div>
-                            <div class="text-[11px] text-slate-400 mt-0.5">UUID-ordered SELECT ... FOR UPDATE + canonical SHA-256 payload digest check</div>
-                        </div>
-                        <span class="mono text-[10px] px-2 py-0.5 rounded bg-blue-950/80 border border-blue-800/70 text-blue-300 shrink-0">409 GUARD</span>
-                    </div>
-
-                    <div class="p-3.5 rounded-xl bg-slate-900/75 border border-slate-800 flex items-start justify-between gap-4">
-                        <div>
-                            <div class="text-xs font-semibold text-white">Pre-Settlement Risk &amp; Velocity Quarantine</div>
-                            <div class="text-[11px] text-slate-400 mt-0.5">Redis 7 ZSET Lua 60s window + OpenSearch 2.12 8-D HNSW cosine scoring</div>
-                        </div>
-                        <span class="mono text-[10px] px-2 py-0.5 rounded bg-amber-950/80 border border-amber-800/70 text-amber-300 shrink-0">[0.00, 0.99]</span>
-                    </div>
-
-                    <div class="p-3.5 rounded-xl bg-slate-900/75 border border-slate-800 flex items-start justify-between gap-4">
-                        <div>
-                            <div class="text-xs font-semibold text-white">Transactional Outbox &amp; Policy RAG Audit</div>
-                            <div class="text-[11px] text-slate-400 mt-0.5">Kafka 3.7 KRaft relay with DLT recovery + PII-redacted compliance copilot</div>
-                        </div>
-                        <span class="mono text-[10px] px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 shrink-0">CORPUS v2.4</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pt-6 border-t border-slate-800/90 flex items-center justify-between text-xs text-slate-400">
-                <span class="mono text-[11px]">HttpOnly JWT + Double-Submit CSRF + Token Family Rotation</span>
-                <div class="flex items-center gap-4">
-                    <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-blue-400 hover:text-blue-300 font-medium">OpenAPI 3.0 ↗</a>
-                    <a href="/actuator/health" target="_blank" rel="noopener" class="text-slate-300 hover:text-white font-medium">Health Probe ↗</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Authentication Form Column -->
-        <div class="lg:col-span-6 flex flex-col justify-center py-10 px-4 sm:px-8 lg:px-12 bg-slate-50 dark:bg-slate-950">
-            <div class="sm:mx-auto sm:w-full sm:max-w-md lg:hidden mb-6">
-                <div class="flex items-center justify-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-[#0052cc] flex items-center justify-center text-white shadow-sm">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l8 3.5v5.5c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6.5L12 3z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 12.2l2.3 2.3 4.8-4.8"/>
+                <!-- Primary 1-Click Workspace Entry (DevPilot Style) -->
+                <div class="mb-5">
+                    <button type="button" onclick="fillDemoCredentials('elena.rostova@payshield.demo', 'PayShieldDemo1')"
+                            class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-semibold text-xs transition shadow-xs flex items-center justify-center gap-2 cursor-pointer">
+                        <span>Continue to Workspace</span>
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6l6 6-6 6"/>
                         </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold tracking-tight text-[#0a2540] dark:text-white">PayShield AI</h1>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Ledger, Vector Risk &amp; Dispute Console</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sm:mx-auto sm:w-full sm:max-w-md">
-                <div class="mb-5 hidden lg:block">
-                    <h1 class="text-xl font-bold tracking-tight text-[#0a2540] dark:text-white">Operator &amp; Customer Sign-In</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Authenticate into the simulated ledger workspace or select a sandbox role persona below.</p>
+                    </button>
                 </div>
 
-                <div class="bg-white dark:bg-slate-900 py-7 px-6 shadow-sm rounded-xl border border-slate-200 dark:border-slate-800 sm:px-8">
+                <div class="relative my-5">
+                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200 dark:border-slate-800"></div></div>
+                    <div class="relative flex justify-center text-[11px] uppercase"><span class="bg-white dark:bg-slate-900 px-2.5 text-slate-400 font-medium">or sign in with credentials</span></div>
+                </div>
+
                 <!-- Auth Mode Tabs -->
-                <div class="flex border-b border-slate-200 dark:border-slate-800 mb-6" role="tablist">
+                <div class="flex border-b border-slate-200 dark:border-slate-800 mb-5" role="tablist">
                     <button id="tab-login" type="button" role="tab" aria-selected="true"
                             onclick="switchAuthTab('login')"
-                            class="flex-1 pb-3 text-sm font-semibold border-b-2 border-[#0052cc] text-[#0052cc] dark:text-blue-400 dark:border-blue-400">
+                            class="flex-1 pb-2.5 text-xs font-semibold border-b-2 border-[#0070ba] text-[#0070ba] dark:text-sky-400 dark:border-sky-400">
                         Sign In
                     </button>
                     <button id="tab-register" type="button" role="tab" aria-selected="false"
                             onclick="switchAuthTab('register')"
-                            class="flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                            class="flex-1 pb-2.5 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400">
                         Create Account
                     </button>
                     <button id="tab-reset" type="button" role="tab" aria-selected="false"
                             onclick="switchAuthTab('reset')"
-                            class="flex-1 pb-3 text-sm font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400">
-                        Password Reset
+                            class="flex-1 pb-2.5 text-xs font-medium border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400">
+                        Reset Password
                     </button>
                 </div>
 
-                <div id="auth-error-banner" role="alert" class="hidden mb-4 p-3 rounded-lg bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300"></div>
-                <div id="auth-success-banner" role="status" class="hidden mb-4 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-700 dark:text-emerald-300"></div>
-
-                <!-- Direct Instant Access Action -->
-                <div class="mb-5 p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 text-center space-y-2">
-                    <p class="text-xs text-blue-900 dark:text-blue-200 font-medium">Explore the live payment ledger, 8-D risk engine &amp; RAG copilot:</p>
-                    <button type="button" onclick="fillDemoCredentials('elena.rostova@payshield.demo', 'PayShieldDemo1')"
-                            class="w-full py-2.5 px-4 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white font-semibold text-xs tracking-wide transition shadow flex items-center justify-center gap-2">
-                        <span>🚀 Open Project Directly (Risk Analyst Demo)</span>
-                    </button>
-                </div>
+                <div id="auth-error-banner" role="alert" class="hidden mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300"></div>
+                <div id="auth-success-banner" role="status" class="hidden mb-4 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-700 dark:text-emerald-300"></div>
 
                 <!-- LOGIN FORM -->
-                <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
+                <form id="login-form" class="space-y-3.5" onsubmit="handleLogin(event)">
                     <div>
-                        <label for="login-email" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Email Address</label>
+                        <label for="login-email" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Email address</label>
                         <input id="login-email" name="email" type="email" required autocomplete="email"
-                               placeholder="alice.morgan@payshield.demo"
-                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm focus:border-[#0052cc] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                               placeholder="name@company.com"
+                               class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950 px-3.5 py-2 text-sm focus:border-[#0070ba] focus:bg-white dark:focus:bg-slate-900 focus:outline-none" />
                     </div>
                     <div>
-                        <label for="login-password" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Password</label>
+                        <label for="login-password" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
                         <input id="login-password" name="password" type="password" required autocomplete="current-password"
                                placeholder="••••••••••••"
-                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm focus:border-[#0052cc] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                               class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950 px-3.5 py-2 text-sm focus:border-[#0070ba] focus:bg-white dark:focus:bg-slate-900 focus:outline-none" />
                     </div>
                     <button id="login-submit-btn" type="submit"
-                            class="w-full py-2.5 px-4 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white font-semibold text-sm transition shadow-sm">
-                        Sign In to PayShield AI
+                            class="w-full py-2.5 px-4 rounded-xl bg-[#0070ba] hover:bg-[#003087] text-white font-semibold text-xs transition shadow-xs cursor-pointer">
+                        Sign In
                     </button>
                 </form>
 
                 <!-- REGISTER FORM -->
-                <form id="register-form" class="space-y-4 hidden" onsubmit="handleRegister(event)">
+                <form id="register-form" class="space-y-3.5 hidden" onsubmit="handleRegister(event)">
                     <div>
-                        <label for="reg-name" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Full Legal Name</label>
+                        <label for="reg-name" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Full name</label>
                         <input id="reg-name" type="text" required minlength="2" maxlength="120"
                                placeholder="Jordan Taylor"
-                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm focus:border-[#0052cc] focus:outline-none" />
+                               class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950 px-3.5 py-2 text-sm focus:border-[#0070ba] focus:outline-none" />
                     </div>
                     <div>
-                        <label for="reg-email" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Email Address</label>
+                        <label for="reg-email" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Email address</label>
                         <input id="reg-email" type="email" required
                                placeholder="jordan.taylor@example.com"
-                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm focus:border-[#0052cc] focus:outline-none" />
+                               class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950 px-3.5 py-2 text-sm focus:border-[#0070ba] focus:outline-none" />
                     </div>
                     <div>
-                        <label for="reg-password" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Password (10+ chars, upper, lower &amp; digit)</label>
+                        <label for="reg-password" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
                         <input id="reg-password" type="password" required minlength="10"
-                               placeholder="StrongPass2026"
-                               class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm focus:border-[#0052cc] focus:outline-none" />
+                               placeholder="At least 10 characters"
+                               class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950 px-3.5 py-2 text-sm focus:border-[#0070ba] focus:outline-none" />
                     </div>
                     <div>
-                        <label for="reg-currency" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Primary Wallet Currency</label>
-                        <select id="reg-currency" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm">
-                            <option value="USD">USD — US Dollar ($5,000.00 simulated starter balance)</option>
-                            <option value="EUR">EUR — Euro (€5,000.00 simulated starter balance)</option>
-                            <option value="GBP">GBP — British Pound (£5,000.00 simulated starter balance)</option>
+                        <label for="reg-currency" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Primary currency</label>
+                        <select id="reg-currency" class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950 px-3.5 py-2 text-sm">
+                            <option value="USD">USD — US Dollar ($5,000.00 starter balance)</option>
+                            <option value="EUR">EUR — Euro (€5,000.00 starter balance)</option>
+                            <option value="GBP">GBP — British Pound (£5,000.00 starter balance)</option>
                         </select>
                     </div>
                     <button id="reg-submit-btn" type="submit"
-                            class="w-full py-2.5 px-4 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white font-semibold text-sm transition shadow-sm">
-                        Create Account &amp; Provision Wallet
+                            class="w-full py-2.5 px-4 rounded-xl bg-[#0070ba] hover:bg-[#003087] text-white font-semibold text-xs transition shadow-xs">
+                        Create Account
                     </button>
                 </form>
 
                 <!-- PASSWORD RESET FORM -->
-                <div id="reset-form-container" class="space-y-4 hidden">
+                <div id="reset-form-container" class="space-y-3.5 hidden">
                     <form onsubmit="handlePasswordResetRequest(event)" class="space-y-3">
-                        <p class="text-xs text-slate-600 dark:text-slate-400">Request a single-use 15-minute reset token via the safe local development email outbox adapter.</p>
                         <div>
-                            <label for="reset-email" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Account Email</label>
+                            <label for="reset-email" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Account email</label>
                             <input id="reset-email" type="email" required placeholder="alice.morgan@payshield.demo"
-                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm" />
+                                   class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950 px-3.5 py-2 text-sm" />
                         </div>
-                        <button type="submit" class="w-full py-2 px-4 rounded-lg bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs transition">
-                            Send Single-Use Reset Token
+                        <button type="submit" class="w-full py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs transition">
+                            Request Reset Token
                         </button>
                     </form>
                     <form onsubmit="handlePasswordResetConfirm(event)" class="space-y-3 pt-3 border-t border-slate-200 dark:border-slate-800">
                         <div>
-                            <label for="reset-token" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">Single-Use Reset Token</label>
+                            <label for="reset-token" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Reset token</label>
                             <input id="reset-token" type="text" required placeholder="Paste reset token"
-                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm mono" />
+                                   class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950 px-3.5 py-2 text-sm mono" />
                         </div>
                         <div>
-                            <label for="reset-new-password" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1">New Password</label>
+                            <label for="reset-new-password" class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">New password</label>
                             <input id="reset-new-password" type="password" required minlength="10" placeholder="NewStrongPass1"
-                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-sm" />
+                                   class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950 px-3.5 py-2 text-sm" />
                         </div>
-                        <button type="submit" class="w-full py-2 px-4 rounded-lg bg-[#0052cc] hover:bg-[#003e99] text-white font-semibold text-xs transition">
-                            Confirm Password Reset
+                        <button type="submit" class="w-full py-2 px-4 rounded-xl bg-[#0070ba] hover:bg-[#003087] text-white font-semibold text-xs transition">
+                            Update Password
                         </button>
                     </form>
                 </div>
 
-                <!-- Local Demo Persona Quick-Fill -->
-                <div class="mt-6 pt-5 border-t border-slate-200 dark:border-slate-800">
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2.5">Local Sandbox Quick-Fill Personas</p>
+                <!-- Minimal Demo Role Switcher -->
+                <div class="mt-6 pt-5 border-t border-slate-200/80 dark:border-slate-800">
+                    <p class="text-[11px] font-medium text-slate-400 text-center mb-2.5">Quick switch demo account</p>
                     <div class="grid grid-cols-3 gap-2">
                         <button type="button" onclick="fillDemoCredentials('alice.morgan@payshield.demo', 'PayShieldDemo1')"
-                                class="px-2.5 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition">
-                            <div class="text-xs font-semibold text-slate-800 dark:text-slate-200">Alice Morgan</div>
-                            <div class="text-[10px] text-blue-600 dark:text-blue-400 font-medium">CUSTOMER</div>
+                                class="px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-center transition cursor-pointer">
+                            <div class="text-xs font-semibold text-slate-800 dark:text-slate-200">Alice</div>
+                            <div class="text-[10px] text-slate-400">Customer</div>
                         </button>
                         <button type="button" onclick="fillDemoCredentials('elena.rostova@payshield.demo', 'PayShieldDemo1')"
-                                class="px-2.5 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition">
-                            <div class="text-xs font-semibold text-slate-800 dark:text-slate-200">Elena Rostova</div>
-                            <div class="text-[10px] text-amber-600 dark:text-amber-400 font-medium">RISK_ANALYST</div>
+                                class="px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-center transition cursor-pointer">
+                            <div class="text-xs font-semibold text-slate-800 dark:text-slate-200">Elena</div>
+                            <div class="text-[10px] text-slate-400">Analyst</div>
                         </button>
                         <button type="button" onclick="fillDemoCredentials('marcus.vance@payshield.demo', 'PayShieldDemo1')"
-                                class="px-2.5 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-left transition">
-                            <div class="text-xs font-semibold text-slate-800 dark:text-slate-200">Marcus Vance</div>
-                            <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">ADMIN</div>
+                                class="px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-center transition cursor-pointer">
+                            <div class="text-xs font-semibold text-slate-800 dark:text-slate-200">Marcus</div>
+                            <div class="text-[10px] text-slate-400">Admin</div>
                         </button>
                     </div>
                 </div>
             </div>
+        </main>
 
-                <p class="mt-4 text-center text-[11px] text-slate-500 dark:text-slate-400">
-                    Engineering Simulation Environment — Simulated <span class="mono">NUMERIC(19,4)</span> Ledger Balances Only.
-                </p>
-            </div>
-        </div>
+        <!-- Minimal Footer -->
+        <footer class="relative z-10 py-4 text-center text-xs text-slate-400">
+            PayShield · Double-Entry Payment Ledger &amp; Settlement Platform
+        </footer>
     </div>
 
     <!-- ================================================================== -->
@@ -374,24 +324,21 @@
     <!-- ================================================================== -->
     <div id="app-shell" class="hidden min-h-screen flex flex-col lg:flex-row">
 
-        <!-- Left Navigation Sidebar (PayPal Midnight Royal Blue) -->
-        <aside id="sidebar" class="w-full lg:w-68 paypal-sidebar-gradient text-white flex-shrink-0 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-blue-950/80 shadow-xl">
+        <!-- Left Navigation Sidebar -->
+        <aside id="sidebar" class="w-full lg:w-64 paypal-sidebar-gradient text-white flex-shrink-0 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-blue-950/80">
             <div>
                 <!-- Brand Header -->
                 <div class="px-5 py-5 flex items-center justify-between border-b border-white/10">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0070ba] to-[#009cde] flex items-center justify-center text-white shadow-lg shadow-blue-500/30 ring-1 ring-white/25">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l8 3.5v5.5c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6.5L12 3z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 12.2l2.3 2.3 4.8-4.8"/>
+                        <div class="w-9 h-9 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center text-white">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="5" width="20" height="14" rx="3"/>
+                                <path stroke-linecap="round" d="M2 10h20M6 15h4"/>
                             </svg>
                         </div>
                         <div>
-                            <div class="font-bold text-base tracking-tight leading-none flex items-center gap-1.5">
-                                <span>PayShield</span>
-                                <span class="text-[#38bdf8] font-extrabold italic">Pay</span>
-                            </div>
-                            <div class="text-[10px] text-blue-200/75 mt-1 mono tracking-wider">ACID VAULT · 8D AI</div>
+                            <div class="font-bold text-base tracking-tight leading-none text-white">PayShield</div>
+                            <div class="text-[11px] text-blue-200/70 mt-1">Payments &amp; Ledger</div>
                         </div>
                     </div>
                     <button type="button" class="lg:hidden text-slate-300 hover:text-white p-1" onclick="toggleMobileNav()" aria-label="Toggle navigation menu">
@@ -409,7 +356,7 @@
                     <button type="button" onclick="navigateTo('payments')" data-nav="payments"
                             class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white">
                         <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
-                        <span>Send &amp; Simulate</span>
+                        <span>Send &amp; Transfer</span>
                     </button>
                     <button type="button" onclick="navigateTo('ledger')" data-nav="ledger"
                             class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white">
@@ -419,12 +366,12 @@
                     <button type="button" onclick="navigateTo('risk')" data-nav="risk"
                             class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white">
                         <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/></svg>
-                        <span>Fraud Shield Queue</span>
+                        <span>Risk Review</span>
                     </button>
                     <button type="button" onclick="navigateTo('disputes')" data-nav="disputes"
                             class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white">
                         <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
-                        <span>Resolution Center (AI)</span>
+                        <span>Resolution Center</span>
                     </button>
                     <button type="button" onclick="navigateTo('settings')" data-nav="settings"
                             class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white">
@@ -435,51 +382,51 @@
             </div>
 
             <!-- Sidebar Footer -->
-            <div class="hidden lg:block p-4 m-3 rounded-2xl bg-white/5 border border-white/10 text-[11px] text-blue-100/75 space-y-2 backdrop-blur-xs">
+            <div class="hidden lg:block p-4 m-3 rounded-2xl bg-white/5 border border-white/10 text-[11px] text-blue-100/75 space-y-2">
                 <div class="flex items-center justify-between">
-                    <span>Protection:</span>
-                    <span class="mono text-emerald-300 font-semibold">● PayShield Guard</span>
+                    <span>Session:</span>
+                    <span class="mono text-emerald-300 font-medium">Protected</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span>Ledger Chain:</span>
-                    <span class="mono text-sky-300">SHA-256 Verified</span>
+                    <span>Ledger:</span>
+                    <span class="mono text-sky-300">SHA-256 Chain</span>
                 </div>
                 <div class="flex items-center justify-between pt-2 border-t border-white/10">
-                    <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-sky-300 hover:text-white font-medium">OpenAPI ↗</a>
-                    <a href="/actuator/prometheus" target="_blank" rel="noopener" class="text-blue-200/70 hover:text-white">Metrics ↗</a>
+                    <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-sky-300 hover:text-white font-medium">OpenAPI</a>
+                    <a href="/actuator/prometheus" target="_blank" rel="noopener" class="text-blue-200/70 hover:text-white">Metrics</a>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col min-w-0">
-            <!-- Top Bar (PayPal Glass Header) -->
+            <!-- Top Bar -->
             <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h2 id="page-title" class="text-lg font-extrabold text-[#001435] dark:text-white tracking-tight">Executive Overview</h2>
-                    <p id="page-subtitle" class="text-xs text-slate-500 dark:text-slate-400">Real-time wallet balances, transaction telemetry, and fraud risk indicators.</p>
+                    <h2 id="page-title" class="text-lg font-extrabold text-[#001435] dark:text-white tracking-tight">Home &amp; Wallets</h2>
+                    <p id="page-subtitle" class="text-xs text-slate-500 dark:text-slate-400">Multi-currency wallet balances, instant transfers, and real-time settlement activity.</p>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2.5">
-                    <!-- 1-Click Persona Switcher Pills -->
+                    <!-- 1-Click Account Switcher Pills -->
                     <div class="hidden xl:flex items-center gap-1 p-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-[11px]">
                         <button type="button" onclick="fillDemoCredentials('alice.morgan@payshield.demo', 'PayShieldDemo1')"
-                                class="px-2.5 py-1 rounded-full font-semibold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition">
-                            Alice (Customer)
+                                class="px-2.5 py-1 rounded-full font-semibold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition cursor-pointer">
+                            Alice
                         </button>
                         <button type="button" onclick="fillDemoCredentials('elena.rostova@payshield.demo', 'PayShieldDemo1')"
-                                class="px-2.5 py-1 rounded-full font-semibold text-[#003087] dark:text-sky-300 bg-white dark:bg-slate-700 shadow-2xs transition">
-                            Elena (Analyst)
+                                class="px-2.5 py-1 rounded-full font-semibold text-[#003087] dark:text-sky-300 bg-white dark:bg-slate-700 shadow-2xs transition cursor-pointer">
+                            Elena
                         </button>
                         <button type="button" onclick="fillDemoCredentials('marcus.vance@payshield.demo', 'PayShieldDemo1')"
-                                class="px-2.5 py-1 rounded-full font-semibold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition">
-                            Marcus (Admin)
+                                class="px-2.5 py-1 rounded-full font-semibold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition cursor-pointer">
+                            Marcus
                         </button>
                     </div>
 
                     <span id="header-telemetry-pill" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] mono font-medium bg-emerald-50/90 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span>SHA-256 Ledger</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        <span>Ledger Active</span>
                     </span>
                     <span id="user-role-badge" class="px-3 py-1 rounded-full text-[11px] mono font-bold bg-[#f0f7ff] text-[#003087] dark:bg-blue-950 dark:text-sky-300 border border-blue-200 dark:border-blue-800">
                         CUSTOMER
@@ -487,11 +434,14 @@
                     <span id="user-email-display" class="text-xs font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline"></span>
 
                     <button type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme"
-                            class="px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-                        ◐ Theme
+                            class="p-2 rounded-full border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path stroke-linecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                        </svg>
                     </button>
                     <button type="button" onclick="handleLogout()"
-                            class="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 transition">
+                            class="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 transition cursor-pointer">
                         Sign Out
                     </button>
                 </div>
@@ -501,44 +451,47 @@
             <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
 
                 <!-- ====================================================== -->
-                <!-- PAGE 1: OVERVIEW (PayPal App Experience)               -->
+                <!-- PAGE 1: OVERVIEW (PayPal FinTech App Experience)       -->
                 <!-- ====================================================== -->
                 <section id="view-overview" class="space-y-6">
 
-                    <!-- PayPal Hero Balance Banner & Quick Actions -->
+                    <!-- PayPal Balance Banner & Quick Actions (Clean SVG Icons, Zero Emojis) -->
                     <div class="paypal-hero-gradient rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden">
                         <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                            <div class="space-y-2">
-                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/12 border border-white/20 text-[11px] font-semibold tracking-wide backdrop-blur-xs">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                                    <span>PayShield Balance · Multi-Currency ACID Vault</span>
+                            <div class="space-y-1.5">
+                                <div class="text-xs font-semibold text-blue-100/90 tracking-wide">
+                                    PayShield Balance · Total Portfolio
                                 </div>
-                                <div class="flex items-baseline gap-3 pt-1">
+                                <div class="flex items-baseline gap-3">
                                     <div id="hero-total-balance" class="text-3xl sm:text-4xl font-extrabold tracking-tight mono">$7,725.00</div>
-                                    <span class="text-xs sm:text-sm text-sky-200 font-semibold">Est. Total Liquidity</span>
+                                    <span class="text-xs text-sky-200 font-medium">Available across currencies</span>
                                 </div>
-                                <p class="text-xs text-blue-100/85 max-w-xl">
-                                    Instant double-entry settlement protected by 8-dimensional behavioral vector scoring, Redis 60s velocity shields, and cryptographic SHA-256 ledger chaining.
+                                <p class="text-xs text-blue-100/80 max-w-xl pt-0.5">
+                                    Instant settlement backed by double-entry accounting and real-time velocity protection.
                                 </p>
                             </div>
 
-                            <!-- PayPal Pill Quick-Action Buttons -->
+                            <!-- Clean Pill Quick-Action Buttons with SVG Icons -->
                             <div class="flex flex-wrap items-center gap-2.5">
                                 <button type="button" onclick="navigateTo('payments')"
-                                        class="px-5 py-2.5 rounded-full bg-white text-[#003087] hover:bg-blue-50 font-bold text-xs shadow-lg transition flex items-center gap-2 cursor-pointer">
-                                    <span>↗ Send &amp; Simulate</span>
+                                        class="px-5 py-2.5 rounded-full bg-white text-[#003087] hover:bg-blue-50 font-bold text-xs shadow-md transition inline-flex items-center gap-2 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M7 7h10v10"/></svg>
+                                    <span>Send Money</span>
                                 </button>
                                 <button type="button" onclick="navigateTo('payments'); setTimeout(() => runVelocityAttackSimulation(), 150);"
-                                        class="px-4 py-2.5 rounded-full bg-[#009cde]/30 hover:bg-[#009cde]/45 text-white border border-white/25 font-semibold text-xs backdrop-blur-xs transition flex items-center gap-1.5 cursor-pointer">
-                                    <span>⚡ Velocity Burst</span>
+                                        class="px-4 py-2.5 rounded-full bg-white/12 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                    <span>Velocity Test</span>
                                 </button>
                                 <button type="button" onclick="navigateTo('disputes')"
-                                        class="px-4 py-2.5 rounded-full bg-white/12 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs backdrop-blur-xs transition flex items-center gap-1.5 cursor-pointer">
-                                    <span>✨ AI Dispute Copilot</span>
+                                        class="px-4 py-2.5 rounded-full bg-white/12 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                    <span>Resolution Center</span>
                                 </button>
                                 <button type="button" onclick="navigateTo('ledger')"
-                                        class="px-4 py-2.5 rounded-full bg-white/12 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs backdrop-blur-xs transition flex items-center gap-1.5 cursor-pointer">
-                                    <span>🔒 Verify Ledger</span>
+                                        class="px-4 py-2.5 rounded-full bg-white/12 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span>Ledger Audit</span>
                                 </button>
                             </div>
                         </div>
@@ -546,11 +499,12 @@
 
                     <div class="flex items-center justify-between pt-1">
                         <div>
-                            <h3 class="text-sm font-extrabold uppercase tracking-wider text-[#001435] dark:text-white">Your PayShield Cards &amp; Wallets</h3>
-                            <p class="text-xs text-slate-500">Multi-currency accounts with row-level pessimistic locking</p>
+                            <h3 class="text-sm font-bold text-[#001435] dark:text-white">Accounts &amp; Currencies</h3>
+                            <p class="text-xs text-slate-500">Active currency balances and settlement accounts</p>
                         </div>
-                        <button type="button" onclick="loadOverviewData()" class="px-3.5 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-[#0070ba] dark:text-sky-400 hover:shadow-xs transition">
-                            ↻ Refresh Telemetry
+                        <button type="button" onclick="loadOverviewData()" class="px-3.5 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-[#0070ba] dark:text-sky-400 hover:bg-slate-50 transition inline-flex items-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <span>Refresh</span>
                         </button>
                     </div>
 
@@ -560,12 +514,12 @@
                     <div class="paypal-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6">
                         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                             <div>
-                                <h3 class="text-base font-extrabold text-[#001435] dark:text-white">Payment Status Distribution</h3>
-                                <p class="text-xs text-slate-500">Live settlement and fraud quarantine telemetry across the ledger</p>
+                                <h3 class="text-base font-bold text-[#001435] dark:text-white">Settlement Overview</h3>
+                                <p class="text-xs text-slate-500">Transaction status distribution across your accounts</p>
                             </div>
                             <span id="overview-total-tx" class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-[#f0f7ff] text-[#003087] dark:bg-slate-800 dark:text-sky-300 border border-blue-200/60 dark:border-slate-700">Total: 0</span>
                         </div>
-                        <div id="overview-status-bar" class="h-3.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex mb-5 shadow-inner"></div>
+                        <div id="overview-status-bar" class="h-3 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex mb-5"></div>
                         <div id="overview-status-cards" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"></div>
                     </div>
 
@@ -574,11 +528,11 @@
                         <div class="lg:col-span-2 paypal-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
-                                    <h3 class="text-base font-extrabold text-[#001435] dark:text-white">Recent Activity</h3>
-                                    <p class="text-xs text-slate-500">Instant transfers &amp; 8-D risk evaluations</p>
+                                    <h3 class="text-base font-bold text-[#001435] dark:text-white">Recent Activity</h3>
+                                    <p class="text-xs text-slate-500">Completed transfers and risk evaluations</p>
                                 </div>
-                                <button type="button" onclick="navigateTo('payments')" class="px-3.5 py-1.5 rounded-full bg-[#f0f7ff] hover:bg-blue-100/80 dark:bg-slate-800 text-xs font-bold text-[#0070ba] dark:text-sky-400 transition">
-                                    Send / Simulate →
+                                <button type="button" onclick="navigateTo('payments')" class="px-3.5 py-1.5 rounded-full bg-[#f0f7ff] hover:bg-blue-100/80 dark:bg-slate-800 text-xs font-semibold text-[#0070ba] dark:text-sky-400 transition cursor-pointer">
+                                    New Transfer
                                 </button>
                             </div>
                             <div class="overflow-x-auto">
@@ -587,9 +541,9 @@
                                         <tr class="border-b border-slate-200/80 dark:border-slate-800 text-slate-400 text-[11px] uppercase tracking-wider">
                                             <th class="py-3 pr-3">Merchant / Counterparty</th>
                                             <th class="py-3 px-3">Amount</th>
-                                            <th class="py-3 px-3">AI Risk Score</th>
+                                            <th class="py-3 px-3">Risk Score</th>
                                             <th class="py-3 px-3">Status</th>
-                                            <th class="py-3 pl-3 text-right">Inspect</th>
+                                            <th class="py-3 pl-3 text-right">Details</th>
                                         </tr>
                                     </thead>
                                     <tbody id="overview-recent-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/80"></tbody>
@@ -601,11 +555,11 @@
                         <div class="paypal-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
-                                    <h3 class="text-base font-extrabold text-[#001435] dark:text-white">Protection Alerts</h3>
-                                    <p class="text-xs text-slate-500">Quarantined high-risk transfers</p>
+                                    <h3 class="text-base font-bold text-[#001435] dark:text-white">Flagged Activity</h3>
+                                    <p class="text-xs text-slate-500">Transfers requiring review</p>
                                 </div>
-                                <button type="button" onclick="navigateTo('risk')" class="px-3 py-1 rounded-full bg-red-50 dark:bg-red-950/60 text-xs font-bold text-red-600 dark:text-red-300 hover:bg-red-100 transition">
-                                    Review Queue →
+                                <button type="button" onclick="navigateTo('risk')" class="px-3 py-1 rounded-full bg-red-50 dark:bg-red-950/60 text-xs font-semibold text-red-600 dark:text-red-300 hover:bg-red-100 transition cursor-pointer">
+                                    Review Queue
                                 </button>
                             </div>
                             <div id="overview-alerts-list" class="space-y-3"></div>
@@ -1572,8 +1526,8 @@
                     </td>
                     <td class="py-3.5 px-3">${renderStatusBadge(tx.status)}</td>
                     <td class="py-3.5 pl-3 text-right space-x-1.5">
-                        <button type="button" onclick="inspectTransaction('${escapeHtml(tx.id)}')" class="px-2.5 py-1 rounded-full bg-[#f0f7ff] hover:bg-blue-100 dark:bg-slate-800 text-[#0070ba] dark:text-sky-400 font-bold text-[11px] transition">Vector</button>
-                        <button type="button" onclick="openRagForTransaction('${escapeHtml(tx.id)}')" class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[11px] transition">AI RAG</button>
+                        <button type="button" onclick="inspectTransaction('${escapeHtml(tx.id)}')" class="px-2.5 py-1 rounded-full bg-[#f0f7ff] hover:bg-blue-100 dark:bg-slate-800 text-[#0070ba] dark:text-sky-400 font-semibold text-[11px] transition cursor-pointer">Telemetry</button>
+                        <button type="button" onclick="openRagForTransaction('${escapeHtml(tx.id)}')" class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold text-[11px] transition cursor-pointer">Dispute</button>
                     </td>
                 </tr>
                 `;
@@ -1595,8 +1549,8 @@
                     <div class="text-xs font-extrabold text-slate-900 dark:text-white">${escapeHtml(a.merchantName)} — <span class="mono">${escapeHtml(Number(a.amount).toFixed(2))} ${escapeHtml(a.currency)}</span></div>
                     <div class="text-[11px] text-slate-500">Corridor: <strong>${escapeHtml(a.sourceCountry)} → ${escapeHtml(a.destinationCountry)}</strong> (${escapeHtml(a.ipDistanceKm)} km IP delta)</div>
                     <div class="pt-1 flex items-center justify-between">
-                        <button type="button" onclick="inspectTransaction('${escapeHtml(a.id)}')" class="text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:underline">8-D Vector</button>
-                        <button type="button" onclick="openRagForTransaction('${escapeHtml(a.id)}')" class="px-3 py-1 rounded-full paypal-btn text-white text-[11px] font-bold">Investigate with AI →</button>
+                        <button type="button" onclick="inspectTransaction('${escapeHtml(a.id)}')" class="text-[11px] font-semibold text-slate-600 dark:text-slate-400 hover:underline cursor-pointer">Telemetry</button>
+                        <button type="button" onclick="openRagForTransaction('${escapeHtml(a.id)}')" class="px-3 py-1 rounded-full paypal-btn text-white text-[11px] font-semibold cursor-pointer">Review Case</button>
                     </div>
                 </div>
             `).join('');
