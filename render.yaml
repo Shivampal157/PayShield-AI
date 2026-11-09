@@ -17,4 +17,6 @@ services:
         value: OFFLINE
       - key: APP_COOKIE_SECURE
         value: "false"
+      - key: JAVA_OPTS
+        value: "-XX:+UseContainerSupport -Xmx280m -Xms128m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k -Djava.security.egd=file:/dev/./urandom"
 
