@@ -11,6 +11,9 @@
       and reference `/assets/payshield.min.css`. Core layout and color tokens are also defined below in native CSS as a resilient baseline.
     -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -18,14 +21,14 @@
                 extend: {
                     colors: {
                         navy: {
-                            900: '#0a2540',
-                            800: '#103152',
-                            700: '#1b436b'
+                            900: '#001435',
+                            800: '#002259',
+                            700: '#003087'
                         },
                         brand: {
-                            600: '#0052cc',
-                            700: '#003e99',
-                            50: '#eff6ff'
+                            600: '#0070ba',
+                            700: '#003087',
+                            50: '#f0f7ff'
                         }
                     }
                 }
@@ -35,36 +38,82 @@
     <style>
         :root {
             --bg-surface: #ffffff;
-            --bg-canvas: #f4f6f9;
-            --text-primary: #0a2540;
+            --bg-canvas: #f5f7fa;
+            --text-primary: #001435;
             --text-secondary: #475569;
-            --accent-blue: #0052cc;
+            --accent-blue: #0070ba;
             --border-subtle: #e2e8f0;
         }
         .dark {
-            --bg-surface: #0f172a;
-            --bg-canvas: #020617;
+            --bg-surface: #0b1325;
+            --bg-canvas: #030712;
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --accent-blue: #3b82f6;
+            --accent-blue: #38bdf8;
             --border-subtle: #1e293b;
         }
         body {
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-canvas);
             color: var(--text-primary);
-            letter-spacing: -0.01em;
+            letter-spacing: -0.012em;
+        }
+        h1, h2, h3, h4, .font-display {
+            font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+            letter-spacing: -0.025em;
         }
         .mono {
-            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
             font-variant-numeric: tabular-nums;
         }
         .tech-grid {
-            background-color: #06111f;
-            background-image:
-                linear-gradient(to right, rgba(30, 58, 95, 0.28) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(30, 58, 95, 0.28) 1px, transparent 1px);
-            background-size: 32px 32px;
+            background: radial-gradient(circle at 18% 20%, rgba(0, 156, 222, 0.25), transparent 42%),
+                        radial-gradient(circle at 85% 80%, rgba(0, 112, 186, 0.28), transparent 48%),
+                        linear-gradient(155deg, #00112c 0%, #001c4d 52%, #003087 100%);
+        }
+        .paypal-hero-gradient {
+            background: radial-gradient(circle at 88% 18%, rgba(0, 156, 222, 0.42), transparent 45%),
+                        linear-gradient(135deg, #001435 0%, #003087 52%, #0070ba 100%);
+            box-shadow: 0 20px 45px -15px rgba(0, 48, 135, 0.45);
+        }
+        .paypal-sidebar-gradient {
+            background: linear-gradient(180deg, #00112c 0%, #001d4a 58%, #002966 100%);
+        }
+        .paypal-btn {
+            background: linear-gradient(135deg, #003087 0%, #0070ba 55%, #009cde 100%);
+            box-shadow: 0 6px 20px -4px rgba(0, 112, 186, 0.5);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .paypal-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 26px -4px rgba(0, 112, 186, 0.65);
+            filter: brightness(1.05);
+        }
+        .paypal-card {
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 28px -8px rgba(0, 20, 53, 0.06), 0 2px 6px -1px rgba(0, 20, 53, 0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .paypal-wallet-usd {
+            background: radial-gradient(circle at 90% 12%, rgba(56, 189, 248, 0.35), transparent 42%),
+                        linear-gradient(135deg, #001c64 0%, #003087 50%, #0070ba 100%);
+            box-shadow: 0 16px 36px -10px rgba(0, 48, 135, 0.42);
+        }
+        .paypal-wallet-eur {
+            background: radial-gradient(circle at 90% 12%, rgba(45, 212, 191, 0.3), transparent 42%),
+                        linear-gradient(135deg, #0a192f 0%, #0f3167 52%, #0284c7 100%);
+            box-shadow: 0 16px 36px -10px rgba(2, 132, 199, 0.36);
+        }
+        .paypal-wallet-gbp {
+            background: radial-gradient(circle at 90% 12%, rgba(167, 139, 250, 0.32), transparent 42%),
+                        linear-gradient(135deg, #1e1b4b 0%, #1e3a8a 52%, #2563eb 100%);
+            box-shadow: 0 16px 36px -10px rgba(37, 99, 235, 0.36);
+        }
+        .paypal-wallet-card {
+            transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+        }
+        .paypal-wallet-card:hover {
+            transform: translateY(-4px);
         }
     </style>
 </head>
@@ -325,21 +374,24 @@
     <!-- ================================================================== -->
     <div id="app-shell" class="hidden min-h-screen flex flex-col lg:flex-row">
 
-        <!-- Left Navigation Sidebar -->
-        <aside id="sidebar" class="w-full lg:w-64 bg-[#071526] text-white flex-shrink-0 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-800">
+        <!-- Left Navigation Sidebar (PayPal Midnight Royal Blue) -->
+        <aside id="sidebar" class="w-full lg:w-68 paypal-sidebar-gradient text-white flex-shrink-0 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-blue-950/80 shadow-xl">
             <div>
                 <!-- Brand Header -->
-                <div class="px-5 py-4 flex items-center justify-between border-b border-slate-800/90">
+                <div class="px-5 py-5 flex items-center justify-between border-b border-white/10">
                     <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-lg bg-[#0052cc] flex items-center justify-center text-white shadow-sm">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0070ba] to-[#009cde] flex items-center justify-center text-white shadow-lg shadow-blue-500/30 ring-1 ring-white/25">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 3l8 3.5v5.5c0 5-3.4 8.8-8 10-4.6-1.2-8-5-8-10V6.5L12 3z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8.5 12.2l2.3 2.3 4.8-4.8"/>
                             </svg>
                         </div>
                         <div>
-                            <div class="font-bold text-sm tracking-tight leading-none">PayShield AI</div>
-                            <div class="text-[11px] text-slate-400 mt-1 mono">LEDGER · RISK · V2</div>
+                            <div class="font-bold text-base tracking-tight leading-none flex items-center gap-1.5">
+                                <span>PayShield</span>
+                                <span class="text-[#38bdf8] font-extrabold italic">Pay</span>
+                            </div>
+                            <div class="text-[10px] text-blue-200/75 mt-1 mono tracking-wider">ACID VAULT · 8D AI</div>
                         </div>
                     </div>
                     <button type="button" class="lg:hidden text-slate-300 hover:text-white p-1" onclick="toggleMobileNav()" aria-label="Toggle navigation menu">
@@ -348,82 +400,98 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <nav id="nav-links" class="hidden lg:block px-3 py-4 space-y-1" aria-label="Main Navigation">
+                <nav id="nav-links" class="hidden lg:block px-3.5 py-5 space-y-1.5" aria-label="Main Navigation">
                     <button type="button" onclick="navigateTo('overview')" data-nav="overview"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left bg-[#0052cc] text-white">
-                        <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-                        <span>Executive Overview</span>
+                            class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left paypal-btn text-white">
+                        <svg class="w-4 h-4 shrink-0 opacity-95" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+                        <span>Home &amp; Wallets</span>
                     </button>
                     <button type="button" onclick="navigateTo('payments')" data-nav="payments"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                            class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white">
                         <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
-                        <span>Payment Simulator</span>
+                        <span>Send &amp; Simulate</span>
                     </button>
                     <button type="button" onclick="navigateTo('ledger')" data-nav="ledger"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                            class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white">
                         <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        <span>Double-Entry Ledger</span>
+                        <span>Activity &amp; Ledger</span>
                     </button>
                     <button type="button" onclick="navigateTo('risk')" data-nav="risk"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                            class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white">
                         <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4c-.77-1.33-2.69-1.33-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/></svg>
-                        <span>Risk Operations</span>
+                        <span>Fraud Shield Queue</span>
                     </button>
                     <button type="button" onclick="navigateTo('disputes')" data-nav="disputes"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                            class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white">
                         <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
-                        <span>Dispute Copilot (RAG)</span>
+                        <span>Resolution Center (AI)</span>
                     </button>
                     <button type="button" onclick="navigateTo('settings')" data-nav="settings"
-                            class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white">
+                            class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white">
                         <svg class="w-4 h-4 shrink-0 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                        <span>Telemetry &amp; Controls</span>
+                        <span>System Telemetry</span>
                     </button>
                 </nav>
             </div>
 
             <!-- Sidebar Footer -->
-            <div class="hidden lg:block p-4 border-t border-slate-800/90 text-[11px] text-slate-400 space-y-2">
+            <div class="hidden lg:block p-4 m-3 rounded-2xl bg-white/5 border border-white/10 text-[11px] text-blue-100/75 space-y-2 backdrop-blur-xs">
                 <div class="flex items-center justify-between">
-                    <span>Session Guard:</span>
-                    <span class="mono text-emerald-400">HttpOnly + CSRF</span>
+                    <span>Protection:</span>
+                    <span class="mono text-emerald-300 font-semibold">● PayShield Guard</span>
                 </div>
                 <div class="flex items-center justify-between">
-                    <span>Journal Mode:</span>
-                    <span class="mono text-blue-300">SHA-256 Chain</span>
+                    <span>Ledger Chain:</span>
+                    <span class="mono text-sky-300">SHA-256 Verified</span>
                 </div>
-                <div class="flex items-center justify-between pt-1 border-t border-slate-800/80">
-                    <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-blue-400 hover:underline">Swagger UI ↗</a>
-                    <a href="/actuator/prometheus" target="_blank" rel="noopener" class="text-slate-400 hover:text-white">Prometheus ↗</a>
+                <div class="flex items-center justify-between pt-2 border-t border-white/10">
+                    <a href="/swagger-ui.html" target="_blank" rel="noopener" class="text-sky-300 hover:text-white font-medium">OpenAPI ↗</a>
+                    <a href="/actuator/prometheus" target="_blank" rel="noopener" class="text-blue-200/70 hover:text-white">Metrics ↗</a>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col min-w-0">
-            <!-- Top Bar -->
-            <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+            <!-- Top Bar (PayPal Glass Header) -->
+            <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h2 id="page-title" class="text-lg font-bold text-[#0a2540] dark:text-white">Executive Overview</h2>
+                    <h2 id="page-title" class="text-lg font-extrabold text-[#001435] dark:text-white tracking-tight">Executive Overview</h2>
                     <p id="page-subtitle" class="text-xs text-slate-500 dark:text-slate-400">Real-time wallet balances, transaction telemetry, and fraud risk indicators.</p>
                 </div>
 
-                <div class="flex items-center gap-2.5">
-                    <span id="header-telemetry-pill" class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] mono font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <!-- 1-Click Persona Switcher Pills -->
+                    <div class="hidden xl:flex items-center gap-1 p-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-[11px]">
+                        <button type="button" onclick="fillDemoCredentials('alice.morgan@payshield.demo', 'PayShieldDemo1')"
+                                class="px-2.5 py-1 rounded-full font-semibold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition">
+                            Alice (Customer)
+                        </button>
+                        <button type="button" onclick="fillDemoCredentials('elena.rostova@payshield.demo', 'PayShieldDemo1')"
+                                class="px-2.5 py-1 rounded-full font-semibold text-[#003087] dark:text-sky-300 bg-white dark:bg-slate-700 shadow-2xs transition">
+                            Elena (Analyst)
+                        </button>
+                        <button type="button" onclick="fillDemoCredentials('marcus.vance@payshield.demo', 'PayShieldDemo1')"
+                                class="px-2.5 py-1 rounded-full font-semibold text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 transition">
+                            Marcus (Admin)
+                        </button>
+                    </div>
+
+                    <span id="header-telemetry-pill" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] mono font-medium bg-emerald-50/90 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span>SHA-256 Ledger</span>
                     </span>
-                    <span id="user-role-badge" class="px-2.5 py-1 rounded-md text-[11px] mono font-semibold bg-blue-50 text-[#0052cc] dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                    <span id="user-role-badge" class="px-3 py-1 rounded-full text-[11px] mono font-bold bg-[#f0f7ff] text-[#003087] dark:bg-blue-950 dark:text-sky-300 border border-blue-200 dark:border-blue-800">
                         CUSTOMER
                     </span>
-                    <span id="user-email-display" class="text-xs font-medium text-slate-700 dark:text-slate-300 hidden sm:inline"></span>
+                    <span id="user-email-display" class="text-xs font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline"></span>
 
                     <button type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme"
-                            class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
-                        Theme
+                            class="px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        ◐ Theme
                     </button>
                     <button type="button" onclick="handleLogout()"
-                            class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-semibold text-slate-800 dark:text-slate-200 transition">
+                            class="px-3.5 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 transition">
                         Sign Out
                     </button>
                 </div>
@@ -433,62 +501,111 @@
             <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
 
                 <!-- ====================================================== -->
-                <!-- PAGE 1: OVERVIEW                                       -->
+                <!-- PAGE 1: OVERVIEW (PayPal App Experience)               -->
                 <!-- ====================================================== -->
                 <section id="view-overview" class="space-y-6">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Currency-Aware Wallets</h3>
-                        <button type="button" onclick="loadOverviewData()" class="text-xs font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">
-                            Refresh Telemetry
+
+                    <!-- PayPal Hero Balance Banner & Quick Actions -->
+                    <div class="paypal-hero-gradient rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden">
+                        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                            <div class="space-y-2">
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/12 border border-white/20 text-[11px] font-semibold tracking-wide backdrop-blur-xs">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                    <span>PayShield Balance · Multi-Currency ACID Vault</span>
+                                </div>
+                                <div class="flex items-baseline gap-3 pt-1">
+                                    <div id="hero-total-balance" class="text-3xl sm:text-4xl font-extrabold tracking-tight mono">$7,725.00</div>
+                                    <span class="text-xs sm:text-sm text-sky-200 font-semibold">Est. Total Liquidity</span>
+                                </div>
+                                <p class="text-xs text-blue-100/85 max-w-xl">
+                                    Instant double-entry settlement protected by 8-dimensional behavioral vector scoring, Redis 60s velocity shields, and cryptographic SHA-256 ledger chaining.
+                                </p>
+                            </div>
+
+                            <!-- PayPal Pill Quick-Action Buttons -->
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <button type="button" onclick="navigateTo('payments')"
+                                        class="px-5 py-2.5 rounded-full bg-white text-[#003087] hover:bg-blue-50 font-bold text-xs shadow-lg transition flex items-center gap-2 cursor-pointer">
+                                    <span>↗ Send &amp; Simulate</span>
+                                </button>
+                                <button type="button" onclick="navigateTo('payments'); setTimeout(() => runVelocityAttackSimulation(), 150);"
+                                        class="px-4 py-2.5 rounded-full bg-[#009cde]/30 hover:bg-[#009cde]/45 text-white border border-white/25 font-semibold text-xs backdrop-blur-xs transition flex items-center gap-1.5 cursor-pointer">
+                                    <span>⚡ Velocity Burst</span>
+                                </button>
+                                <button type="button" onclick="navigateTo('disputes')"
+                                        class="px-4 py-2.5 rounded-full bg-white/12 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs backdrop-blur-xs transition flex items-center gap-1.5 cursor-pointer">
+                                    <span>✨ AI Dispute Copilot</span>
+                                </button>
+                                <button type="button" onclick="navigateTo('ledger')"
+                                        class="px-4 py-2.5 rounded-full bg-white/12 hover:bg-white/20 text-white border border-white/20 font-semibold text-xs backdrop-blur-xs transition flex items-center gap-1.5 cursor-pointer">
+                                    <span>🔒 Verify Ledger</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1">
+                        <div>
+                            <h3 class="text-sm font-extrabold uppercase tracking-wider text-[#001435] dark:text-white">Your PayShield Cards &amp; Wallets</h3>
+                            <p class="text-xs text-slate-500">Multi-currency accounts with row-level pessimistic locking</p>
+                        </div>
+                        <button type="button" onclick="loadOverviewData()" class="px-3.5 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-[#0070ba] dark:text-sky-400 hover:shadow-xs transition">
+                            ↻ Refresh Telemetry
                         </button>
                     </div>
 
-                    <div id="overview-wallets-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+                    <div id="overview-wallets-grid" class="grid grid-cols-1 md:grid-cols-3 gap-5"></div>
 
                     <!-- Status Breakdown & Distribution Bar -->
-                    <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                    <div class="paypal-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6">
                         <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                             <div>
-                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Payment Status Distribution</h3>
-                                <p class="text-xs text-slate-500">Live counts across the payment ledger database</p>
+                                <h3 class="text-base font-extrabold text-[#001435] dark:text-white">Payment Status Distribution</h3>
+                                <p class="text-xs text-slate-500">Live settlement and fraud quarantine telemetry across the ledger</p>
                             </div>
-                            <span id="overview-total-tx" class="text-xs font-mono font-semibold px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800">Total: 0</span>
+                            <span id="overview-total-tx" class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-[#f0f7ff] text-[#003087] dark:bg-slate-800 dark:text-sky-300 border border-blue-200/60 dark:border-slate-700">Total: 0</span>
                         </div>
-                        <div id="overview-status-bar" class="h-3 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex mb-4"></div>
+                        <div id="overview-status-bar" class="h-3.5 w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden flex mb-5 shadow-inner"></div>
                         <div id="overview-status-cards" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"></div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Recent Payments Table -->
-                        <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                        <!-- Recent Payments Activity Feed -->
+                        <div class="lg:col-span-2 paypal-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Recent Payments</h3>
-                                <button type="button" onclick="navigateTo('payments')" class="text-xs font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">
-                                    Open Simulator →
+                                <div>
+                                    <h3 class="text-base font-extrabold text-[#001435] dark:text-white">Recent Activity</h3>
+                                    <p class="text-xs text-slate-500">Instant transfers &amp; 8-D risk evaluations</p>
+                                </div>
+                                <button type="button" onclick="navigateTo('payments')" class="px-3.5 py-1.5 rounded-full bg-[#f0f7ff] hover:bg-blue-100/80 dark:bg-slate-800 text-xs font-bold text-[#0070ba] dark:text-sky-400 transition">
+                                    Send / Simulate →
                                 </button>
                             </div>
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left border-collapse text-xs">
                                     <thead>
-                                        <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-500 uppercase">
-                                            <th class="py-2.5 pr-3">Counterparty / Merchant</th>
-                                            <th class="py-2.5 px-3">Amount</th>
-                                            <th class="py-2.5 px-3">Risk Score</th>
-                                            <th class="py-2.5 px-3">Status</th>
-                                            <th class="py-2.5 pl-3 text-right">Action</th>
+                                        <tr class="border-b border-slate-200/80 dark:border-slate-800 text-slate-400 text-[11px] uppercase tracking-wider">
+                                            <th class="py-3 pr-3">Merchant / Counterparty</th>
+                                            <th class="py-3 px-3">Amount</th>
+                                            <th class="py-3 px-3">AI Risk Score</th>
+                                            <th class="py-3 px-3">Status</th>
+                                            <th class="py-3 pl-3 text-right">Inspect</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="overview-recent-tbody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                                    <tbody id="overview-recent-tbody" class="divide-y divide-slate-100 dark:divide-slate-800/80"></tbody>
                                 </table>
                             </div>
                         </div>
 
                         <!-- Active Risk Alerts -->
-                        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                        <div class="paypal-card bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-sm font-bold text-[#0a2540] dark:text-white">Quarantined Risk Alerts</h3>
-                                <button type="button" onclick="navigateTo('risk')" class="text-xs font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">
-                                    Risk Queue →
+                                <div>
+                                    <h3 class="text-base font-extrabold text-[#001435] dark:text-white">Protection Alerts</h3>
+                                    <p class="text-xs text-slate-500">Quarantined high-risk transfers</p>
+                                </div>
+                                <button type="button" onclick="navigateTo('risk')" class="px-3 py-1 rounded-full bg-red-50 dark:bg-red-950/60 text-xs font-bold text-red-600 dark:text-red-300 hover:bg-red-100 transition">
+                                    Review Queue →
                                 </button>
                             </div>
                             <div id="overview-alerts-list" class="space-y-3"></div>
@@ -1263,17 +1380,17 @@
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 const active = btn.getAttribute('data-nav') === view;
                 btn.className = active
-                    ? 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left bg-[#0052cc] text-white'
-                    : 'nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition text-left text-slate-300 hover:bg-slate-800/70 hover:text-white';
+                    ? 'nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left paypal-btn text-white'
+                    : 'nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition text-left text-blue-100/80 hover:bg-white/10 hover:text-white';
             });
 
             const meta = {
-                overview: ['Executive Overview', 'Currency-aware wallet balances, settlement distribution, and quarantined alerts.'],
-                payments: ['Payment & Risk Telemetry Simulator', 'Execute idempotent transfers, inspect wire headers, and trigger 60s velocity bursts.'],
-                ledger: ['Immutable Double-Entry Ledger', 'Inspect ACID debit/credit postings, SHA-256 hash chains, and zero-sum reconciliation.'],
-                risk: ['Risk Operations Center', 'Review quarantined transactions, inspect 8-D behavioral vectors, and audit decisions.'],
-                disputes: ['Dispute Copilot (RAG)', 'Retrieve OpenSearch historical cases and compliance policies for three-point investigation reports.'],
-                settings: ['Telemetry & Session Controls', 'Micrometer latency percentiles, Redis/OpenSearch posture, token rotation, and Kafka DLT replay.']
+                overview: ['Home & Multi-Currency Vault', 'Currency-aware wallet balances, instant transfers, and real-time fraud protection.'],
+                payments: ['Send & Simulate Payment', 'Execute idempotent transfers, inspect wire headers, and trigger 60s velocity bursts.'],
+                ledger: ['Activity & Double-Entry Ledger', 'Inspect ACID debit/credit postings, SHA-256 hash chains, and zero-sum reconciliation.'],
+                risk: ['Fraud Shield Operations Center', 'Review quarantined transactions, inspect 8-D behavioral vectors, and audit decisions.'],
+                disputes: ['AI Resolution Center (RAG)', 'Retrieve OpenSearch historical cases and compliance policies for three-point investigation reports.'],
+                settings: ['System Telemetry & Controls', 'Micrometer latency percentiles, Redis/OpenSearch posture, token rotation, and Kafka DLT replay.']
             };
             document.getElementById('page-title').textContent = meta[view][0];
             document.getElementById('page-subtitle').textContent = meta[view][1];
@@ -1311,28 +1428,66 @@
 
         function renderOverviewWallets(wallets) {
             const grid = document.getElementById('overview-wallets-grid');
+            const heroTotalEl = document.getElementById('hero-total-balance');
             if (!wallets.length) {
-                grid.innerHTML = `<div class="p-4 rounded-xl bg-white dark:bg-slate-900 border text-xs text-slate-500">No wallets found.</div>`;
+                grid.innerHTML = `<div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border text-xs text-slate-500">No wallets found.</div>`;
                 return;
             }
-            grid.innerHTML = wallets.map(w => `
-                <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
+
+            const fxRates = { USD: 1.0, EUR: 1.09, GBP: 1.27 };
+            const totalUsd = wallets.reduce((acc, w) => acc + (Number(w.balance) || 0) * (fxRates[w.currency] || 1), 0);
+            if (heroTotalEl) {
+                heroTotalEl.textContent = '$' + totalUsd.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+
+            const symbols = { USD: '$', EUR: '€', GBP: '£' };
+            const cardThemes = {
+                USD: 'paypal-wallet-usd',
+                EUR: 'paypal-wallet-eur',
+                GBP: 'paypal-wallet-gbp'
+            };
+
+            grid.innerHTML = wallets.map(w => {
+                const sym = symbols[w.currency] || '';
+                const theme = cardThemes[w.currency] || 'paypal-wallet-usd';
+                return `
+                <div class="${theme} paypal-wallet-card rounded-2xl p-6 text-white flex flex-col justify-between relative overflow-hidden">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">${escapeHtml(w.currency)} Wallet</span>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">${escapeHtml(w.status)}</span>
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 rounded-full bg-white/15 border border-white/25 flex items-center justify-center font-extrabold text-base backdrop-blur-xs">
+                                ${escapeHtml(sym || w.currency[0])}
+                            </div>
+                            <div>
+                                <div class="text-xs font-extrabold uppercase tracking-wider text-white/95">${escapeHtml(w.currency)} Vault Card</div>
+                                <div class="text-[10px] text-sky-200/80">PayShield Instant Settlement</div>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-400/20 text-emerald-200 border border-emerald-300/30">${escapeHtml(w.status)}</span>
                     </div>
-                    <div class="my-3">
-                        <div class="text-2xl font-bold tracking-tight text-[#0a2540] dark:text-white mono">
-                            ${escapeHtml(Number(w.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 }))}
-                            <span class="text-sm font-semibold text-slate-500">${escapeHtml(w.currency)}</span>
+
+                    <div class="my-5 flex items-end justify-between">
+                        <div>
+                            <div class="text-[10px] uppercase tracking-widest text-blue-200/75 font-semibold mb-0.5">Available Balance</div>
+                            <div class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mono">
+                                ${escapeHtml(sym)}${escapeHtml(Number(w.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
+                                <span class="text-xs font-semibold text-blue-200">${escapeHtml(w.currency)}</span>
+                            </div>
+                        </div>
+                        <!-- EMV Smart Chip Icon -->
+                        <div class="w-10 h-7 rounded-md bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 border border-amber-100/60 opacity-90 flex items-center justify-center shadow-inner">
+                            <div class="w-6 h-4 border border-amber-700/40 rounded-xs"></div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100 dark:border-slate-800">
-                        <span class="mono">${escapeHtml(w.accountNumber)}</span>
-                        <span>ACID Locked</span>
+
+                    <div class="flex items-center justify-between text-[11px] text-blue-100/90 pt-3 border-t border-white/15">
+                        <span class="mono tracking-wider font-medium">${escapeHtml(w.accountNumber)}</span>
+                        <button type="button" onclick="navigateTo('payments')" class="px-3 py-1 rounded-full bg-white/15 hover:bg-white/25 text-white font-bold text-[10px] transition cursor-pointer">
+                            Send ${escapeHtml(w.currency)} ↗
+                        </button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function renderOverviewBreakdown(total, breakdown) {
@@ -1349,20 +1504,29 @@
                 PENDING: 'bg-blue-500'
             };
 
+            const cardAccents = {
+                APPROVED: 'border-l-4 border-l-emerald-500',
+                FLAGGED_FRAUD: 'border-l-4 border-l-red-500',
+                REVIEW_REQUIRED: 'border-l-4 border-l-amber-500',
+                DECLINED: 'border-l-4 border-l-slate-400',
+                FAILED: 'border-l-4 border-l-rose-500',
+                PENDING: 'border-l-4 border-l-blue-500'
+            };
+
             if (total > 0) {
                 bar.innerHTML = Object.entries(breakdown).map(([status, count]) => {
                     if (!count) return '';
                     const pct = Math.max(2, (count / total) * 100);
-                    return `<div class="${palette[status] || 'bg-blue-500'}" style="width:${pct}%" title="${escapeHtml(status)}: ${count}"></div>`;
+                    return `<div class="${palette[status] || 'bg-blue-500'} transition-all duration-500" style="width:${pct}%" title="${escapeHtml(status)}: ${count}"></div>`;
                 }).join('');
             } else {
                 bar.innerHTML = '';
             }
 
             cards.innerHTML = Object.entries(breakdown).map(([status, count]) => `
-                <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800">
-                    <div class="text-[10px] font-semibold text-slate-500 uppercase">${escapeHtml(status)}</div>
-                    <div class="text-lg font-bold mono mt-0.5">${Number(count)}</div>
+                <div class="p-3.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-800 ${cardAccents[status] || ''}">
+                    <div class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">${escapeHtml(status)}</div>
+                    <div class="text-xl font-extrabold mono mt-1 text-[#001435] dark:text-white">${Number(count)}</div>
                 </div>
             `).join('');
         }
@@ -1373,39 +1537,66 @@
                 tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-400">No payment transactions recorded yet.</td></tr>`;
                 return;
             }
-            tbody.innerHTML = transactions.map(tx => `
-                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
-                    <td class="py-2.5 pr-3">
-                        <div class="font-semibold text-slate-800 dark:text-slate-200">${escapeHtml(tx.merchantName)}</div>
-                        <div class="text-[11px] text-slate-500">${escapeHtml(tx.senderEmail)} → ${escapeHtml(tx.recipientEmail)}</div>
+            tbody.innerHTML = transactions.map(tx => {
+                const initials = (tx.merchantName || 'PS').split(' ').map(s => s[0]).join('').slice(0, 2).toUpperCase();
+                const riskVal = Number(tx.riskScore) || 0;
+                const riskPct = Math.min(100, Math.max(4, Math.round(riskVal * 100)));
+                const riskColor = riskVal >= 0.7 ? 'bg-red-500' : riskVal >= 0.4 ? 'bg-amber-500' : 'bg-emerald-500';
+                const avatarBg = riskVal >= 0.7
+                    ? 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300'
+                    : 'bg-[#f0f7ff] text-[#003087] dark:bg-slate-800 dark:text-sky-300';
+
+                return `
+                <tr class="hover:bg-blue-50/40 dark:hover:bg-slate-800/40 transition">
+                    <td class="py-3.5 pr-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full ${avatarBg} font-extrabold text-xs flex items-center justify-center shrink-0 border border-blue-200/50 dark:border-slate-700">
+                                ${escapeHtml(initials)}
+                            </div>
+                            <div>
+                                <div class="font-bold text-slate-900 dark:text-slate-100">${escapeHtml(tx.merchantName)}</div>
+                                <div class="text-[11px] text-slate-500">${escapeHtml(tx.senderEmail)} → ${escapeHtml(tx.recipientEmail)}</div>
+                            </div>
+                        </div>
                     </td>
-                    <td class="py-2.5 px-3 mono font-semibold">${escapeHtml(Number(tx.amount).toFixed(2))} ${escapeHtml(tx.currency)}</td>
-                    <td class="py-2.5 px-3 mono">${escapeHtml(Number(tx.riskScore).toFixed(4))}</td>
-                    <td class="py-2.5 px-3">${renderStatusBadge(tx.status)}</td>
-                    <td class="py-2.5 pl-3 text-right space-x-2">
-                        <button type="button" onclick="inspectTransaction('${escapeHtml(tx.id)}')" class="text-[#0052cc] dark:text-blue-400 font-semibold hover:underline">Vector</button>
-                        <button type="button" onclick="openRagForTransaction('${escapeHtml(tx.id)}')" class="text-slate-600 dark:text-slate-300 font-semibold hover:underline">RAG</button>
+                    <td class="py-3.5 px-3 mono font-extrabold text-slate-900 dark:text-white">
+                        ${escapeHtml(Number(tx.amount).toFixed(2))} <span class="text-[11px] font-semibold text-slate-500">${escapeHtml(tx.currency)}</span>
+                    </td>
+                    <td class="py-3.5 px-3">
+                        <div class="flex items-center gap-2">
+                            <span class="mono font-bold text-xs">${escapeHtml(riskVal.toFixed(4))}</span>
+                            <div class="w-14 h-1.5 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden hidden sm:block">
+                                <div class="h-full ${riskColor}" style="width:${riskPct}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-3">${renderStatusBadge(tx.status)}</td>
+                    <td class="py-3.5 pl-3 text-right space-x-1.5">
+                        <button type="button" onclick="inspectTransaction('${escapeHtml(tx.id)}')" class="px-2.5 py-1 rounded-full bg-[#f0f7ff] hover:bg-blue-100 dark:bg-slate-800 text-[#0070ba] dark:text-sky-400 font-bold text-[11px] transition">Vector</button>
+                        <button type="button" onclick="openRagForTransaction('${escapeHtml(tx.id)}')" class="px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[11px] transition">AI RAG</button>
                     </td>
                 </tr>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function renderOverviewAlerts(alerts) {
             const list = document.getElementById('overview-alerts-list');
             if (!alerts.length) {
-                list.innerHTML = `<div class="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/40 text-xs text-slate-500">No active quarantined risk alerts.</div>`;
+                list.innerHTML = `<div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 text-xs text-slate-500">No active quarantined risk alerts.</div>`;
                 return;
             }
             list.innerHTML = alerts.map(a => `
-                <div class="p-3.5 rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50/40 dark:bg-red-950/20 space-y-1.5">
+                <div class="p-4 rounded-2xl border border-red-200/90 dark:border-red-900/60 bg-gradient-to-br from-red-50/80 to-white dark:from-red-950/30 dark:to-slate-900 space-y-2 shadow-2xs">
                     <div class="flex items-center justify-between">
                         ${renderStatusBadge(a.status)}
-                        <span class="mono text-xs font-bold text-red-700 dark:text-red-300">Risk: ${escapeHtml(Number(a.riskScore).toFixed(4))}</span>
+                        <span class="mono text-xs font-extrabold text-red-700 dark:text-red-300 bg-red-100/80 dark:bg-red-950 px-2 py-0.5 rounded-full">Risk: ${escapeHtml(Number(a.riskScore).toFixed(4))}</span>
                     </div>
-                    <div class="text-xs font-semibold">${escapeHtml(a.merchantName)} (${escapeHtml(Number(a.amount).toFixed(2))} ${escapeHtml(a.currency)})</div>
-                    <div class="text-[11px] text-slate-500">Corridor: ${escapeHtml(a.sourceCountry)} → ${escapeHtml(a.destinationCountry)} (${escapeHtml(a.ipDistanceKm)} km)</div>
-                    <div class="pt-1 flex gap-3">
-                        <button type="button" onclick="openRagForTransaction('${escapeHtml(a.id)}')" class="text-[11px] font-semibold text-[#0052cc] dark:text-blue-400 hover:underline">Run RAG Audit →</button>
+                    <div class="text-xs font-extrabold text-slate-900 dark:text-white">${escapeHtml(a.merchantName)} — <span class="mono">${escapeHtml(Number(a.amount).toFixed(2))} ${escapeHtml(a.currency)}</span></div>
+                    <div class="text-[11px] text-slate-500">Corridor: <strong>${escapeHtml(a.sourceCountry)} → ${escapeHtml(a.destinationCountry)}</strong> (${escapeHtml(a.ipDistanceKm)} km IP delta)</div>
+                    <div class="pt-1 flex items-center justify-between">
+                        <button type="button" onclick="inspectTransaction('${escapeHtml(a.id)}')" class="text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:underline">8-D Vector</button>
+                        <button type="button" onclick="openRagForTransaction('${escapeHtml(a.id)}')" class="px-3 py-1 rounded-full paypal-btn text-white text-[11px] font-bold">Investigate with AI →</button>
                     </div>
                 </div>
             `).join('');
