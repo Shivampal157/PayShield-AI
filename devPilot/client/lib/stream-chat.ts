@@ -31,14 +31,40 @@ async function streamDemoMessage(
   demoEngine.saveMessage(sessionId, userMessage);
   handlers.onUserMessage?.(userMessage);
 
-  const { answer, citations } = demoEngine.buildRagResponse(sessionId, content);
-  const tokens = answer.match(/\S+\s*|\n+/g) ?? [answer];
+  const fallbackRag = demoEngine.buildRagResponse(sessionId, content);
+  let finalAnswer = fallbackRag.answer;
+  const citations = fallbackRag.citations;
+
+  try {
+    const aiRes = await fetch("/api/ai-chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question: content,
+        contextHint: fallbackRag.answer,
+      }),
+      signal: handlers.signal,
+    });
+    if (aiRes.ok) {
+      const aiData = (await aiRes.json()) as {
+        fallback?: boolean;
+        answer?: string;
+      };
+      if (!aiData.fallback && aiData.answer) {
+        finalAnswer = aiData.answer;
+      }
+    }
+  } catch {
+    // Use grounded local RAG response if offline or aborted
+  }
+
+  const tokens = finalAnswer.match(/\S+\s*|\n+/g) ?? [finalAnswer];
 
   for (const token of tokens) {
     if (handlers.signal?.aborted) {
       return;
     }
-    await new Promise((resolve) => setTimeout(resolve, 16));
+    await new Promise((resolve) => setTimeout(resolve, 14));
     if (handlers.signal?.aborted) {
       return;
     }
@@ -48,7 +74,7 @@ async function streamDemoMessage(
   const assistantMessage: ChatMessage = {
     id: `msg-a-${Date.now()}`,
     role: "ASSISTANT",
-    content: answer,
+    content: finalAnswer,
     citations,
     createdAt: new Date().toISOString(),
   };
