@@ -986,6 +986,9 @@
             if (csrf) {
                 headers['X-CSRF-Token'] = csrf;
             }
+            if (state.accessToken && !headers['Authorization']) {
+                headers['Authorization'] = `Bearer ${state.accessToken}`;
+            }
 
             const response = await fetch(path, Object.assign({}, options, {
                 headers,
@@ -1168,6 +1171,9 @@
 
         function onSessionEstablished(sessionData) {
             state.user = sessionData.user || sessionData;
+            if (sessionData.accessToken) {
+                state.accessToken = sessionData.accessToken;
+            }
             if (sessionData.csrfToken) {
                 state.csrfToken = sessionData.csrfToken;
             }
@@ -1298,6 +1304,7 @@
                 renderOverviewAlerts(data.riskAlerts || []);
                 state.recentTransactionsCache = data.recentTransactions || [];
             } catch (err) {
+                if (err.status === 401 && !state.user) return;
                 showToast(`Failed to load overview: ${err.message}`, 'error');
             }
         }
